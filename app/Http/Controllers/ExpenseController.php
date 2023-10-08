@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Production\ProductionStoreRequest;
 use App\Http\Requests\Sale\SaleUpdateRequest;
+use App\Http\Requests\Transaction\TransactionIndexRequest;
 use App\Models\Expense;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class ExpenseController extends Controller
 {
@@ -15,9 +18,26 @@ class ExpenseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(TransactionIndexRequest $request)
     {
-        //
+        $expenses = Expense::query();
+        $expenses->where('transaction_id', '=', NULL);
+        if ($request->has('search')) {
+            $expenses->where('description', 'LIKE', "%" . $request->search . "%");
+        }
+        if ($request->has(['field', 'order'])) {
+            $expenses->orderBy($request->field, $request->order);
+        }
+        $perPage = $request->has('perPage') ? $request->perPage : 10;
+        $roles = Role::get();
+        return Inertia::render('Expense/Index', [
+            'title'         => 'Expense',
+            'filters'       => $request->all(['search', 'field', 'order']),
+            'perPage'       => (int) $perPage,
+            'roles'         => $roles,
+            'expenses'      => $expenses->paginate($perPage),
+            'breadcrumbs'   => [['label' => 'Expense', 'href' => route('expense.index')]],
+        ]);
     }
 
     /**

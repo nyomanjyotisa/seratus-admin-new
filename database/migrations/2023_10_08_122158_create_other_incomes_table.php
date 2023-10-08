@@ -15,10 +15,11 @@ return new class extends Migration
     {
         Schema::create('other_incomes', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('transaction_id');
+            $table->bigInteger('transaction_id')->nullable();
             $table->bigInteger('amount');
             $table->text('description');
             $table->timestamp('date');
+            $table->timestamp('closed_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

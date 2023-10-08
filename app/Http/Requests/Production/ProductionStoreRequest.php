@@ -25,7 +25,7 @@ class ProductionStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'transaction_id' => 'required',
+            'transaction_id' => 'nullable',
             'amount' => 'required',
             'description' => 'required',
             'date' => 'required',

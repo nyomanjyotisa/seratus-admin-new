@@ -24,7 +24,7 @@ class TransactionIndexRequest extends FormRequest
     public function rules()
     {
         return [
-            'field' => ['in:unique_code,description,status,created_at,updated_at'],
+            'field' => [],
             'order' => ['in:asc,desc'],
             'perPage' => ['numeric'],
         ];

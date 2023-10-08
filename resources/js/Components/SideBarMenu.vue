@@ -58,15 +58,16 @@ import { Link } from "@inertiajs/vue3";
                 </Link>
             </li>
             
-            <li class="py-2">
+            <!-- <li class="py-2">
                 <p>Transaction</p>
-            </li><li
-            class="text-white rounded-lg hover:bg-primary dark:hover:bg-primary"
-            v-bind:class="
-                route().current('transaction.index')
-                    ? 'bg-primary'
-                    : 'bg-slate-700/40 dark:bg-slate-800/40'
-            "
+            </li> -->
+            <li
+                class="text-white rounded-lg hover:bg-primary dark:hover:bg-primary"
+                v-bind:class="
+                    route().current('transaction.index')
+                        ? 'bg-primary'
+                        : 'bg-slate-700/40 dark:bg-slate-800/40'
+                "
             >
                 <Link
                     :href="route('transaction.index')"
@@ -76,7 +77,39 @@ import { Link } from "@inertiajs/vue3";
                     <span class="ml-3">Transaction</span>
                 </Link>
             </li>
-            <li v-show="can(['read user'])" class="py-2">
+            <li
+                class="text-white rounded-lg hover:bg-primary dark:hover:bg-primary"
+                v-bind:class="
+                    route().current('expense.index')
+                        ? 'bg-primary'
+                        : 'bg-slate-700/40 dark:bg-slate-800/40'
+                "
+            >
+                <Link
+                    :href="route('expense.index')"
+                    class="flex items-center py-2 px-4"
+                >
+                    <Bars4Icon class="w-6 h-5" />
+                    <span class="ml-3">Other Expense</span>
+                </Link>
+            </li>
+            <li
+                class="text-white rounded-lg hover:bg-primary dark:hover:bg-primary"
+                v-bind:class="
+                    route().current('other-income.index')
+                        ? 'bg-primary'
+                        : 'bg-slate-700/40 dark:bg-slate-800/40'
+                "
+            >
+                <Link
+                    :href="route('other-income.index')"
+                    class="flex items-center py-2 px-4"
+                >
+                    <Bars4Icon class="w-6 h-5" />
+                    <span class="ml-3">Other Income</span>
+                </Link>
+            </li>
+            <!-- <li v-show="can(['read user'])" class="py-2">
                 <p>{{ lang().label.data }}</p>
             </li>
             <li
@@ -132,7 +165,7 @@ import { Link } from "@inertiajs/vue3";
                     <ShieldCheckIcon class="w-6 h-5" />
                     <span class="ml-3">{{ lang().label.permission }}</span>
                 </Link>
-            </li>
+            </li> -->
         </ul>
     </div>
 </template>

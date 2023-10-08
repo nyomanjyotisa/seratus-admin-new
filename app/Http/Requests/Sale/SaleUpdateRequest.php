@@ -25,7 +25,7 @@ class SaleUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'transaction_id' => 'required',
+            'transaction_id' => 'nullable',
             'source' => 'nullable',
             'payment_channel' => 'nullable',
             'payment_type' => 'nullable',

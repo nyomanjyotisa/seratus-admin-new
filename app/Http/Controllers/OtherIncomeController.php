@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Production\ProductionStoreRequest;
 use App\Http\Requests\Sale\SaleUpdateRequest;
+use App\Http\Requests\Transaction\TransactionIndexRequest;
 use App\Models\OtherIncome;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class OtherIncomeController extends Controller
 {
@@ -15,9 +17,23 @@ class OtherIncomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(TransactionIndexRequest $request)
     {
-        //
+        $otherIncomes = OtherIncome::query();
+        if ($request->has('search')) {
+            $otherIncomes->where('description', 'LIKE', "%" . $request->search . "%");
+        }
+        if ($request->has(['field', 'order'])) {
+            $otherIncomes->orderBy($request->field, $request->order);
+        }
+        $perPage = $request->has('perPage') ? $request->perPage : 10;
+        return Inertia::render('OtherIncome/Index', [
+            'title'         => 'Other Income',
+            'filters'       => $request->all(['search', 'field', 'order']),
+            'perPage'       => (int) $perPage,
+            'otherIncomes'  => $otherIncomes->paginate($perPage),
+            'breadcrumbs'   => [['label' => 'Other Income', 'href' => route('other-income.index')]],
+        ]);
     }
 
     /**
