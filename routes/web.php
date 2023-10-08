@@ -1,9 +1,15 @@
 <?php
 
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\OtherIncomeController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Models\OtherIncome;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -53,6 +59,14 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::resource('/user', UserController::class)->except('create', 'show', 'edit');
     Route::post('/user/destroy-bulk', [UserController::class, 'destroyBulk'])->name('user.destroy-bulk');
     
+    Route::resource('/transaction', TransactionController::class)->except('create', 'edit');
+    Route::post('/transaction/destroy-bulk', [TransactionController::class, 'destroyBulk'])->name('transaction.destroy-bulk');
+    
+    Route::resource('/sale', SaleController::class)->except('create', 'edit');
+    Route::resource('/production', ProductionController::class)->except('create', 'edit');
+    Route::resource('/expense', ExpenseController::class)->except('create', 'edit');
+    Route::resource('/other-income', OtherIncomeController::class)->except('create', 'edit');
+
     Route::resource('/role', RoleController::class)->except('create', 'show', 'edit');
     Route::post('/role/destroy-bulk', [RoleController::class, 'destroyBulk'])->name('role.destroy-bulk');
 
