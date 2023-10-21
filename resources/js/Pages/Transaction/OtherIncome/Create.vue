@@ -21,7 +21,7 @@ const form = useForm({
     amount: "",
     description: "",
     date: "",
-    transaction_id: props.transaction.id,
+    transaction_id: props.transaction?.id,
 });
 
 const create = () => {

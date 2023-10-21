@@ -20,6 +20,7 @@ class OtherIncomeController extends Controller
     public function index(TransactionIndexRequest $request)
     {
         $otherIncomes = OtherIncome::query();
+        $otherIncomes->where('transaction_id', '=', NULL);
         if ($request->has('search')) {
             $otherIncomes->where('description', 'LIKE', "%" . $request->search . "%");
         }
