@@ -76,7 +76,7 @@ watchEffect(() => {
                     </div>
 
                     <div>
-                        <InputLabel for="description" value="Description" />
+                        <InputLabel for="description" value="Deskripsi" />
                         <TextInput
                             id="description"
                             type="text"
@@ -89,7 +89,7 @@ watchEffect(() => {
                     </div>
 
                     <div>
-                        <InputLabel for="date" value="Date" />
+                        <InputLabel for="date" value="Tanggal" />
                         <TextInput
                             id="date"
                             type="date"

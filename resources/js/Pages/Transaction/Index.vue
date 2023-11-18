@@ -32,6 +32,7 @@ const props = defineProps({
     roles: Object,
     breadcrumbs: Object,
     perPage: Number,
+    isDone: Boolean,
 });
 const data = reactive({
     params: {
@@ -94,11 +95,22 @@ const select = () => {
             <div class="px-4 sm:px-0">
                 <div class="rounded-lg overflow-hidden w-fit">
                     <PrimaryButton
-                        class="rounded-none"
+                        class="rounded"
                         @click="data.createOpen = true"
+                        v-if="props.isDone == false"
                     >
                         {{ lang().button.add }}
                     </PrimaryButton>
+                    <Link
+                        :href="route('transaction.index.done')"
+                    >
+                        <PrimaryButton
+                            class="rounded ml-3"
+                            v-if="props.isDone == false"
+                        >
+                            Lihat Transaksi Selesai
+                        </PrimaryButton>
+                    </Link>
                     <Create
                         :show="data.createOpen"
                         @close="data.createOpen = false"
@@ -176,17 +188,6 @@ const select = () => {
                                 </th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('description')"
-                                >
-                                    <div
-                                        class="flex justify-between items-center"
-                                    >
-                                        <span>Description</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
-                                    </div>
-                                </th>
-                                <th
-                                    class="px-2 py-4 cursor-pointer"
                                     v-on:click="order('status')"
                                 >
                                     <div
@@ -198,12 +199,23 @@ const select = () => {
                                 </th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
+                                    v-on:click="order('status')"
+                                >
+                                    <div
+                                        class="flex justify-between items-center"
+                                    >
+                                        <span>Laba</span>
+                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-2 py-4 cursor-pointer"
                                     v-on:click="order('source')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
-                                        <span>Source</span>
+                                        <span>Sumber</span>
                                         <ChevronUpDownIcon class="w-4 h-4" />
                                     </div>
                                 </th>
@@ -214,7 +226,7 @@ const select = () => {
                                     <div
                                         class="flex justify-between items-center"
                                     >
-                                        <span>Date</span>
+                                        <span>Tanggal</span>
                                         <ChevronUpDownIcon class="w-4 h-4" />
                                     </div>
                                 </th>
@@ -244,13 +256,41 @@ const select = () => {
                                     {{ ++index }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
-                                    {{ transaction.unique_code ?? '-' }}
+                                    <p> {{ transaction.unique_code ?? '-' }} </p>
+                                    <p> {{ transaction.description ?? '-' }} </p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
-                                    {{ transaction.description }}
+                                    <p v-if="transaction.sales_count > 0" class="text-green-600">
+                                        Penjualan ({{ transaction.sales_count }}) - Rp{{ transaction.sales_total.toLocaleString() }}
+                                    </p>
+                                    <p v-else class="text-red-600">
+                                        Penjualan (0)
+                                    </p>
+                                    
+                                    <p v-if="transaction.productions_count > 0" class="text-green-600">
+                                        Produksi ({{ transaction.productions_count }}) - Rp{{ transaction.productions_total.toLocaleString() }}
+                                    </p>
+                                    <p v-else class="text-red-600">
+                                        Produksi (0)
+                                    </p>
+                                    
+                                    <p v-if="transaction.expenses_count > 0" class="text-green-600">
+                                        Pengeluaran lain ({{ transaction.expenses_count }}) - Rp{{ transaction.expenses_total.toLocaleString() }}
+                                    </p>
+                                    <p v-else class="text-yellow-600">
+                                        Pengeluaran lain (0)
+                                    </p>
+                                    
+                                    <p v-if="transaction.other_incomes_count > 0" class="text-green-600">
+                                        Pemasukan lain ({{ transaction.other_incomes_count }}) - Rp{{ transaction.other_incomes_total.toLocaleString() }}
+                                    </p>
+                                    <p v-else class="text-yellow-600">
+                                        Pemasukan lain (0)
+                                    </p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
-                                    {{ transaction.status }}
+                                    <p> <strong> Rp{{ transaction.total.toLocaleString() ?? '-' }} </strong> </p>
+                                    <p> {{ transaction.persentase_laba ?? '-' }} % </p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     {{ transaction.source }}
@@ -276,6 +316,7 @@ const select = () => {
                                             </Link>
                                             
                                             <DangerButton
+                                                v-if="props.isDone == false"
                                                 type="button"
                                                 @click="
                                                     (data.deleteOpen = true),

@@ -57,10 +57,6 @@ import { Link } from "@inertiajs/vue3";
                     <span class="ml-3">Dashboard</span>
                 </Link>
             </li>
-            
-            <!-- <li class="py-2">
-                <p>Transaction</p>
-            </li> -->
             <li
                 class="text-white rounded-lg hover:bg-primary dark:hover:bg-primary"
                 v-bind:class="
@@ -74,7 +70,7 @@ import { Link } from "@inertiajs/vue3";
                     class="flex items-center py-2 px-4"
                 >
                     <Bars4Icon class="w-6 h-5" />
-                    <span class="ml-3">Transaction</span>
+                    <span class="ml-3">Transaksi</span>
                 </Link>
             </li>
             <li
@@ -90,7 +86,7 @@ import { Link } from "@inertiajs/vue3";
                     class="flex items-center py-2 px-4"
                 >
                     <Bars4Icon class="w-6 h-5" />
-                    <span class="ml-3">Other Expense</span>
+                    <span class="ml-3">Pengeluaran Lainnya</span>
                 </Link>
             </li>
             <li
@@ -106,7 +102,7 @@ import { Link } from "@inertiajs/vue3";
                     class="flex items-center py-2 px-4"
                 >
                     <Bars4Icon class="w-6 h-5" />
-                    <span class="ml-3">Other Income</span>
+                    <span class="ml-3">Pendapatan Lainnya</span>
                 </Link>
             </li>
             <!-- <li v-show="can(['read user'])" class="py-2">

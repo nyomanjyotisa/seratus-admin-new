@@ -107,7 +107,7 @@ console.log(form.date)
     <section>
         <header>
             <h2 class="text-lg font-medium text-slate-900 dark:text-slate-100">
-                Edit Transaction Detail
+                Edit Detail Transaksi
             </h2>
 
             <!-- <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
@@ -117,7 +117,7 @@ console.log(form.date)
 
         <form @submit.prevent="updateTransaction" class="mt-6 space-y-6">
             <div>
-                <InputLabel for="source" value="Source" />
+                <InputLabel for="source" value="Sumber" />
                 <SelectInput
                     id="source"
                     class="mt-1 block w-full"
@@ -147,7 +147,7 @@ console.log(form.date)
             </div>
 
             <div>
-                <InputLabel for="description" value="Description" />
+                <InputLabel for="description" value="Deskripsi" />
 
                 <TextInput
                     id="description"
@@ -162,7 +162,7 @@ console.log(form.date)
             </div>
 
             <div>
-                <InputLabel for="date" value="Date" />
+                <InputLabel for="date" value="Tanggal" />
                 <TextInput
                     id="date"
                     type="date"

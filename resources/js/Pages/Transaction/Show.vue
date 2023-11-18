@@ -73,7 +73,7 @@ defineProps({
                 class="p-4 sm:p-8 bg-white dark:bg-slate-800 shadow sm:rounded-lg"
             >
                 <OtherIncomeIndex
-                    title="Other Income"
+                    title="Pendapatan Lainnya"
                     :otherIncomes="otherIncomes"
                     :transaction="transaction"
                     class="max-w-xl"

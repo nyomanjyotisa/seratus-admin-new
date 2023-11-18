@@ -116,7 +116,7 @@ const sources = [
                 </h2>
                 <div class="my-6 space-y-4">
                     <div>
-                        <InputLabel for="source" value="Source" />
+                        <InputLabel for="source" value="Sumber" />
                         <SelectInput
                             id="source"
                             class="mt-1 block w-full"
@@ -144,7 +144,7 @@ const sources = [
                     </div>
 
                     <div>
-                        <InputLabel for="description" value="Description" />
+                        <InputLabel for="description" value="Deskripsi" />
                         <TextInput
                             id="description"
                             type="text"
@@ -157,7 +157,7 @@ const sources = [
                     </div>
 
                     <div>
-                        <InputLabel for="date" value="Date" />
+                        <InputLabel for="date" value="Tanggal" />
                         <TextInput
                             id="date"
                             type="date"

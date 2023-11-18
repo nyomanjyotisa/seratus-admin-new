@@ -21,6 +21,7 @@ class TransactionController extends Controller
     public function index(TransactionIndexRequest $request)
     {
         $transactions = Transaction::query();
+        $transactions->where('status', 'pending');
         if ($request->has('search')) {
             $transactions->where('unique_code', 'LIKE', "%" . $request->search . "%");
             $transactions->orWhere('description', 'LIKE', "%" . $request->search . "%");
@@ -31,12 +32,42 @@ class TransactionController extends Controller
         $perPage = $request->has('perPage') ? $request->perPage : 10;
         $roles = Role::get();
         return Inertia::render('Transaction/Index', [
-            'title'         => 'Transaction',
+            'title'         => 'Transaksi',
             'filters'       => $request->all(['search', 'field', 'order']),
             'perPage'       => (int) $perPage,
             'transactions'  => $transactions->paginate($perPage),
             'roles'         => $roles,
-            'breadcrumbs'   => [['label' => 'Transaction', 'href' => route('transaction.index')]],
+            'breadcrumbs'   => [['label' => 'Transaksi', 'href' => route('transaction.index')]],
+            'isDone'        => false,
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexDone(TransactionIndexRequest $request)
+    {
+        $transactions = Transaction::query();
+        $transactions->where('status', 'done');
+        if ($request->has('search')) {
+            $transactions->where('unique_code', 'LIKE', "%" . $request->search . "%");
+            $transactions->orWhere('description', 'LIKE', "%" . $request->search . "%");
+        }
+        if ($request->has(['field', 'order'])) {
+            $transactions->orderBy($request->field, $request->order);
+        }
+        $perPage = $request->has('perPage') ? $request->perPage : 10;
+        $roles = Role::get();
+        return Inertia::render('Transaction/Index', [
+            'title'         => 'Transaksi list Done',
+            'filters'       => $request->all(['search', 'field', 'order']),
+            'perPage'       => (int) $perPage,
+            'transactions'  => $transactions->paginate($perPage),
+            'roles'         => $roles,
+            'breadcrumbs'   => [['label' => 'Transaksi', 'href' => route('transaction.index')]],
+            'isDone'        => true,
         ]);
     }
 
@@ -70,7 +101,7 @@ class TransactionController extends Controller
             return back()->with('success', __('app.label.created_successfully', ['name' => $transaction->description]));
         } catch (\Throwable $th) {
             DB::rollback();
-            return back()->with('error', __('app.label.created_error', ['name' => 'Transaction']) . $th->getMessage());
+            return back()->with('error', __('app.label.created_error', ['name' => 'Transaksi']) . $th->getMessage());
         }
     }
 
@@ -125,7 +156,7 @@ class TransactionController extends Controller
             return back()->with('success', __('app.label.updated_successfully', ['name' => $transaction->description]));
         } catch (\Throwable $th) {
             DB::rollback();
-            return back()->with('error', __('app.label.updated_error', ['name' => 'Transaction']) . $th->getMessage());
+            return back()->with('error', __('app.label.updated_error', ['name' => 'Transaksi']) . $th->getMessage());
         }
     }
 
@@ -150,9 +181,9 @@ class TransactionController extends Controller
         try {
             $transaction = Transaction::whereIn('id', $request->id);
             $transaction->delete();
-            return back()->with('success', __('app.label.deleted_successfully', ['name' => count($request->id) . ' Transaction']));
+            return back()->with('success', __('app.label.deleted_successfully', ['name' => count($request->id) . ' Transaksi']));
         } catch (\Throwable $th) {
-            return back()->with('error', __('app.label.deleted_error', ['name' => count($request->id) . ' Transaction']) . $th->getMessage());
+            return back()->with('error', __('app.label.deleted_error', ['name' => count($request->id) . ' Transaksi']) . $th->getMessage());
         }
     }
 }

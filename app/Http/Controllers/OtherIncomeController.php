@@ -29,11 +29,11 @@ class OtherIncomeController extends Controller
         }
         $perPage = $request->has('perPage') ? $request->perPage : 10;
         return Inertia::render('OtherIncome/Index', [
-            'title'         => 'Other Income',
+            'title'         => 'Pendapatan Lainnya',
             'filters'       => $request->all(['search', 'field', 'order']),
             'perPage'       => (int) $perPage,
             'otherIncomes'  => $otherIncomes->paginate($perPage),
-            'breadcrumbs'   => [['label' => 'Other Income', 'href' => route('other-income.index')]],
+            'breadcrumbs'   => [['label' => 'Pendapatan Lainnya', 'href' => route('other-income.index')]],
         ]);
     }
 
@@ -67,7 +67,7 @@ class OtherIncomeController extends Controller
             return back()->with('success', __('app.label.created_successfully', ['name' => $otherIncome->description]));
         } catch (\Throwable $th) {
             DB::rollback();
-            return back()->with('error', __('app.label.created_error', ['name' => 'Other Income']) . $th->getMessage());
+            return back()->with('error', __('app.label.created_error', ['name' => 'Pendapatan Lainnya']) . $th->getMessage());
         }
     }
 
@@ -114,7 +114,7 @@ class OtherIncomeController extends Controller
             return back()->with('success', __('app.label.updated_successfully', ['name' => $otherIncome->description]));
         } catch (\Throwable $th) {
             DB::rollback();
-            return back()->with('error', __('app.label.updated_error', ['name' => 'Other Income']) . $th->getMessage());
+            return back()->with('error', __('app.label.updated_error', ['name' => 'Pendapatan Lainnya']) . $th->getMessage());
         }
     }
 

@@ -60,6 +60,7 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::post('/user/destroy-bulk', [UserController::class, 'destroyBulk'])->name('user.destroy-bulk');
     
     Route::resource('/transaction', TransactionController::class)->except('create', 'edit');
+    Route::get('/transaction/list/done', [TransactionController::class, 'indexDone'])->name('transaction.index.done');
     Route::post('/transaction/destroy-bulk', [TransactionController::class, 'destroyBulk'])->name('transaction.destroy-bulk');
     
     Route::resource('/sale', SaleController::class)->except('create', 'edit');

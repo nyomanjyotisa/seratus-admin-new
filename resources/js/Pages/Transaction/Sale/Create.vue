@@ -163,7 +163,7 @@ const payment_types = [
                     </div>
 
                     <div>
-                        <InputLabel for="description" value="Description" />
+                        <InputLabel for="description" value="Deskripsi" />
                         <TextInput
                             id="description"
                             type="text"
@@ -176,7 +176,7 @@ const payment_types = [
                     </div>
 
                     <div>
-                        <InputLabel for="date" value="Date" />
+                        <InputLabel for="date" value="Tanggal" />
                         <TextInput
                             id="date"
                             type="date"

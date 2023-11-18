@@ -38,17 +38,18 @@ const data = reactive({
 <template>
     <header class="mb-4">
         <h2 class="text-lg font-medium text-slate-900 dark:text-slate-100">
-            Transaction Other Incomes Data
+            Data Transaksi Pemasukan Lainnya
         </h2>
     </header>
         <div class="space-y-4">
             <div class="px-4 sm:px-0">
                 <div class="rounded-lg overflow-hidden w-fit">
                     <PrimaryButton
+                        v-if="transaction.status == pending"
                         class="rounded-none"
                         @click="data.createOpen = true"
                     >
-                        Add Other Income Data
+                        Tambah Data Pendapatan Lainnya
                     </PrimaryButton>
                     <Create
                         :show="data.createOpen"
@@ -120,7 +121,7 @@ const data = reactive({
                                     <div
                                         class="flex justify-between items-center"
                                     >
-                                        <span>Description</span>
+                                        <span>Deskripsi</span>
                                     </div>
                                 </th>
                                 <th
@@ -129,7 +130,7 @@ const data = reactive({
                                     <div
                                         class="flex justify-between items-center"
                                     >
-                                        <span>Date</span>
+                                        <span>Tanggal</span>
                                     </div>
                                 </th>
                                 <th class="px-2 py-4 sr-only">Action</th>
@@ -147,7 +148,7 @@ const data = reactive({
                                     {{ ++index }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
-                                    {{ otherIncome.amount }}
+                                    Rp{{ otherIncome.amount.toLocaleString() }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     {{ otherIncome.description }}
@@ -161,6 +162,7 @@ const data = reactive({
                                     >
                                         <div class="rounded-md overflow-hidden">
                                             <InfoButton
+                                                v-if="transaction.status == pending"
                                                 type="button"
                                                 @click="
                                                     (data.editOpen = true),
@@ -172,6 +174,7 @@ const data = reactive({
                                                 <PencilIcon class="w-4 h-4" />
                                             </InfoButton>
                                             <DangerButton
+                                                v-if="transaction.status == pending"
                                                 type="button"
                                                 @click="
                                                     (data.deleteOpen = true),
