@@ -42,7 +42,7 @@ const data = reactive({
             <div class="px-4 sm:px-0">
                 <div class="rounded-lg overflow-hidden w-fit">
                     <PrimaryButton
-                        v-if="transaction.status == pending"
+                        v-if="transaction.status == 'pending'"
                         class="rounded-none"
                         @click="data.createOpen = true"
                     >
@@ -171,7 +171,7 @@ const data = reactive({
                                     >
                                         <div class="rounded-md overflow-hidden">
                                             <InfoButton
-                                                v-if="transaction.status == pending"
+                                                v-if="transaction.status == 'pending'"
                                                 type="button"
                                                 @click="
                                                     (data.editOpen = true),
@@ -183,7 +183,7 @@ const data = reactive({
                                                 <PencilIcon class="w-4 h-4" />
                                             </InfoButton>
                                             <DangerButton
-                                                v-if="transaction.status == pending"
+                                                v-if="transaction.status == 'pending'"
                                                 type="button"
                                                 @click="
                                                     (data.deleteOpen = true),

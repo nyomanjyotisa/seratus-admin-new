@@ -16,6 +16,10 @@ const isShowUniqueCode = ref(false)
 var date = new Date(props.transaction.date);
 date.setHours(date.getHours() + 8);
 
+var closed_at = new Date(props.transaction.closed_at);
+closed_at.setHours(closed_at.getHours() + 8);
+
+
 if(props.transaction.source == 'shopee' || props.transaction.source == 'tokped' || props.transaction.source == 'etsy' || props.transaction.source == 'amazon' || props.transaction.source == 'ebay' || props.transaction.source == 'website'){
     isShowUniqueCode.value = true;
 }else{
@@ -29,6 +33,7 @@ const form = useForm({
     status: props.transaction.status,
     source: props.transaction.source,
     date: date.toISOString().slice(0,10),
+    closed_at: props.transaction.closed_at ? closed_at.toISOString().slice(0,10) : '',
 });
 
 const statuses = [
@@ -50,6 +55,22 @@ const updateTransaction = () => {
 
 const sources = [
     {
+        value : 'etsy',
+        label: 'Etsy'
+    },
+    {
+        value : 'tokped',
+        label: 'Tokopedia'
+    },
+    {
+        value : 'shopee',
+        label: 'Shopee'
+    },
+    {
+        value : 'novica',
+        label: 'Novica'
+    },
+    {
         value : 'wa',
         label: 'WhatsApp'
     },
@@ -60,18 +81,6 @@ const sources = [
     {
         value : 'facebook',
         label: 'Facebook'
-    },
-    {
-        value : 'shopee',
-        label: 'Shopee'
-    },
-    {
-        value : 'tokped',
-        label: 'Tokopedia'
-    },
-    {
-        value : 'etsy',
-        label: 'Etsy'
     },
     {
         value : 'email',
@@ -187,6 +196,19 @@ console.log(form.date)
                 </SelectInput>
 
                 <InputError class="mt-2" :message="form.errors.description" />
+            </div>
+
+            <div>
+                <InputLabel for="closed_at" value="Tanggal Closing" />
+                <TextInput
+                    id="closed_at"
+                    type="date"
+                    class="mt-1 block w-full"
+                    v-model="form.closed_at"
+                    placeholder="ex: Pandil Rama Sita 50 cm"
+                    :error="form.errors.closed_at"
+                />
+                <InputError class="mt-2" :message="form.errors.closed_at" />
             </div>
 
             <div class="flex items-center gap-4">

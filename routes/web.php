@@ -73,6 +73,9 @@ Route::middleware('auth', 'verified')->group(function () {
 
     Route::resource('/permission', PermissionController::class)->except('create', 'show', 'edit');
     Route::post('/permission/destroy-bulk', [PermissionController::class, 'destroyBulk'])->name('permission.destroy-bulk');
+ 
+    Route::get('/report/{year}/{month}', [TransactionController::class, 'report'])->name('report');
+    Route::get('/report/{year}/{month}/download', [TransactionController::class, 'report'])->name('report.download');
 });
 
 require __DIR__.'/auth.php';

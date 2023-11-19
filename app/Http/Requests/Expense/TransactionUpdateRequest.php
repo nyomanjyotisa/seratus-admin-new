@@ -28,6 +28,7 @@ class TransactionUpdateRequest extends FormRequest
             'unique_code' => 'required|string|max:255|',
             'description' => 'required|string',
             'status' => 'required',
+            'closed_at' => 'nullable',
         ];
     }
 }

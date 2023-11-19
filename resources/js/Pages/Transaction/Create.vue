@@ -62,6 +62,22 @@ const roles = props.roles?.map((role) => ({
 
 const sources = [
     {
+        value : 'etsy',
+        label: 'Etsy'
+    },
+    {
+        value : 'tokped',
+        label: 'Tokopedia'
+    },
+    {
+        value : 'shopee',
+        label: 'Shopee'
+    },
+    {
+        value : 'novica',
+        label: 'Novica'
+    },
+    {
         value : 'wa',
         label: 'WhatsApp'
     },
@@ -72,18 +88,6 @@ const sources = [
     {
         value : 'facebook',
         label: 'Facebook'
-    },
-    {
-        value : 'shopee',
-        label: 'Shopee'
-    },
-    {
-        value : 'tokped',
-        label: 'Tokopedia'
-    },
-    {
-        value : 'etsy',
-        label: 'Etsy'
     },
     {
         value : 'email',

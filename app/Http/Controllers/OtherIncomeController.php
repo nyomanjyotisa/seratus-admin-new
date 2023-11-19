@@ -26,6 +26,8 @@ class OtherIncomeController extends Controller
         }
         if ($request->has(['field', 'order'])) {
             $otherIncomes->orderBy($request->field, $request->order);
+        }else{
+            $otherIncomes->orderBy('id', 'DESC');
         }
         $perPage = $request->has('perPage') ? $request->perPage : 10;
         return Inertia::render('OtherIncome/Index', [

@@ -108,7 +108,11 @@ class Transaction extends Model
 
     public function getPersentaseLabaAttribute()
     {
-        $persentase_laba = ($this->sales()->sum('amount') - $this->productions()->sum('amount') - $this->expenses()->sum('amount') + $this->otherIncomes()->sum('amount'))/$this->sales()->sum('amount');
-        return sprintf('%0.2f', $persentase_laba);
+        if($this->sales()->sum('amount') == 0){
+            return 0;
+        }else{
+            $persentase_laba = ($this->sales()->sum('amount') - $this->productions()->sum('amount') - $this->expenses()->sum('amount') + $this->otherIncomes()->sum('amount'))/$this->sales()->sum('amount');
+            return sprintf('%0.2f', $persentase_laba * 100);
+        }
     }
 }

@@ -16,4 +16,9 @@ class Expense extends Model
     {
         return date('d M Y', strtotime($this->attributes['date']));
     }
+    
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class);
+    }
 }

@@ -27,6 +27,8 @@ class ExpenseController extends Controller
         }
         if ($request->has(['field', 'order'])) {
             $expenses->orderBy($request->field, $request->order);
+        }else{
+            $expenses->orderBy('id', 'DESC');
         }
         $perPage = $request->has('perPage') ? $request->perPage : 10;
         $roles = Role::get();

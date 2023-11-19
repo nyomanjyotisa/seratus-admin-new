@@ -22,17 +22,24 @@ import Delete from "@/Pages/Transaction/Delete.vue";
 import DeleteBulk from "@/Pages/Transaction/DeleteBulk.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import { usePage } from "@inertiajs/vue3";
-import { Link } from "@inertiajs/vue3";
+import { Link, useForm } from "@inertiajs/vue3";
 
 const { _, debounce, pickBy } = pkg;
 const props = defineProps({
     title: String,
     filters: Object,
     transactions: Object,
+    expenses: Object,
+    otherIncomes: Object,
     roles: Object,
     breadcrumbs: Object,
     perPage: Number,
     isDone: Boolean,
+    year: String,
+    month: String,
+    total_pemasukan: Number,
+    total_pengeluaran: Number,
+    laba: Number,
 });
 const data = reactive({
     params: {
@@ -49,6 +56,11 @@ const data = reactive({
     deleteBulkOpen: false,
     transaction: null,
     dataSet: usePage().props.app.perpage,
+});
+
+const form = useForm({
+    year: props.year,
+    month: props.month,
 });
 
 const order = (field) => {
@@ -84,6 +96,73 @@ const select = () => {
         data.multipleSelect = false;
     }
 };
+
+const years = [
+    {
+        value : '2022',
+        label: '2022'
+    },
+    {
+        value : '2023',
+        label: '2023'
+    },
+    {
+        value : '2024',
+        label: '2024'
+    }
+]
+
+const months = [
+    {
+        value : '1',
+        label: 'Januari'
+    },
+    {
+        value : '2',
+        label: 'Februari'
+    },
+    {
+        value : '3',
+        label: 'Maret'
+    },
+    {
+        value : '4',
+        label: 'April'
+    },
+    {
+        value : '5',
+        label: 'Mei'
+    },
+    {
+        value : '6',
+        label: 'Juni'
+    },
+    {
+        value : '7',
+        label: 'Juli'
+    },
+    {
+        value : '8',
+        label: 'Agustus'
+    },
+    {
+        value : '9',
+        label: 'September'
+    },
+    {
+        value : '10',
+        label: 'Oktober'
+    },
+    {
+        value : '11',
+        label: 'November'
+    },
+    {
+        value : '12',
+        label: 'Desember'
+    }
+]
+
 </script>
 
 <template>
@@ -94,21 +173,38 @@ const select = () => {
         <div class="space-y-4">
             <div class="px-4 sm:px-0">
                 <div class="rounded-lg overflow-hidden w-fit">
-                    <PrimaryButton
-                        class="rounded"
-                        @click="data.createOpen = true"
-                        v-if="props.isDone == false"
+                    <SelectInput
+                        id="status"
+                        class="mt-1"
+                        v-model="form.year"
+                        required
+                        :dataSet="years"
                     >
-                        {{ lang().button.add }}
-                    </PrimaryButton>
+                    </SelectInput>
+                    <SelectInput
+                        id="status"
+                        class="mt-1 ml-3"
+                        v-model="form.month"
+                        required
+                        :dataSet="months"
+                    >
+                    </SelectInput>
                     <Link
-                        :href="route('transaction.index.done')"
+                        :href="route('report', { year: form.year, month: form.month})"
                     >
                         <PrimaryButton
                             class="rounded ml-3"
-                            v-if="props.isDone == false"
                         >
-                            Lihat Transaksi Selesai
+                            Terapkan
+                        </PrimaryButton>
+                    </Link>
+                    <Link
+                        :href="route('report.download', { year: form.year, month: form.month})"
+                    >
+                        <PrimaryButton
+                            class="rounded ml-3"
+                        >
+                            Download Laporan
                         </PrimaryButton>
                     </Link>
                     <Create
@@ -135,26 +231,59 @@ const select = () => {
                     />
                 </div>
             </div>
+            <table>
+                <tbody>
+                    <tr
+                        class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-200/30 hover:dark:bg-slate-900/20"
+                    >
+                        <td
+                            class="whitespace-nowrap py-4 px-2 sm:py-3"
+                        >
+                            Total Pemasukan
+                        </td>
+                        <td
+                            class="whitespace-nowrap py-4 px-2 sm:py-3"
+                        >
+                            <strong> Rp{{total_pemasukan.toLocaleString()}} </strong>
+                        </td>
+                    </tr>
+                    <tr
+                        class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-200/30 hover:dark:bg-slate-900/20"
+                    >
+                        <td
+                            class="whitespace-nowrap py-4 px-2 sm:py-3"
+                        >
+                            Total Pengeluaran
+                        </td>
+                        <td
+                            class="whitespace-nowrap py-4 px-2 sm:py-3"
+                        >
+                            <strong> Rp{{total_pengeluaran.toLocaleString()}} </strong>
+                        </td>
+                    </tr>
+                    <tr
+                        class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-200/30 hover:dark:bg-slate-900/20"
+                    >
+                        <td
+                            class="whitespace-nowrap py-4 px-2 sm:py-3"
+                        >
+                            Laba
+                        </td>
+                        <td
+                            class="whitespace-nowrap py-4 px-2 sm:py-3"
+                        >
+                            <strong> Rp{{laba.toLocaleString()}} </strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h2 class="text-lg font-medium text-slate-900 dark:text-slate-100">
+                Transaksi
+            </h2>
             <div
                 class="relative bg-white dark:bg-slate-800 shadow sm:rounded-lg"
             >
                 <div class="flex justify-between p-2">
-                    <div class="flex space-x-2">
-                        <SelectInput
-                            v-model="data.params.perPage"
-                            :dataSet="data.dataSet"
-                        />
-                        <DangerButton
-                            @click="data.deleteBulkOpen = true"
-                            v-show="
-                                data.selectedId.length != 0
-                            "
-                            class="px-3 py-1.5"
-                            v-tooltip="lang().tooltip.delete_selected"
-                        >
-                            <TrashIcon class="w-5 h-5" />
-                        </DangerButton>
-                    </div>
                     <TextInput
                         v-model="data.params.search"
                         type="text"
@@ -168,12 +297,6 @@ const select = () => {
                             class="uppercase text-sm border-t border-slate-200 dark:border-slate-700"
                         >
                             <tr class="dark:bg-slate-900/50 text-left">
-                                <!-- <th class="px-2 py-4 text-center">
-                                    <Checkbox
-                                        v-model:checked="data.multipleSelect"
-                                        @change="selectAll"
-                                    />
-                                </th> -->
                                 <th class="px-2 py-4 text-center">#</th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
@@ -239,17 +362,6 @@ const select = () => {
                                 :key="index"
                                 class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-200/30 hover:dark:bg-slate-900/20"
                             >
-                                <!-- <td
-                                    class="whitespace-nowrap py-4 px-2 sm:py-3 text-center"
-                                >
-                                    <input
-                                        class="rounded dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-primary dark:text-primary shadow-sm focus:ring-primary/80 dark:focus:ring-primary dark:focus:ring-offset-slate-800 dark:checked:bg-primary dark:checked:border-primary"
-                                        type="checkbox"
-                                        @change="select"
-                                        :value="transaction.id"
-                                        v-model="data.selectedId"
-                                    />
-                                </td> -->
                                 <td
                                     class="whitespace-nowrap py-4 px-2 sm:py-3 text-center"
                                 >
@@ -314,21 +426,6 @@ const select = () => {
                                                 <EyeIcon class="w-4 h-4" />
                                             </InfoButton>
                                             </Link>
-                                            
-                                            <DangerButton
-                                                v-if="props.isDone == false"
-                                                type="button"
-                                                @click="
-                                                    (data.deleteOpen = true),
-                                                        (data.transaction = transaction)
-                                                "
-                                                class="px-2 py-1.5 rounded-none"
-                                                v-tooltip="
-                                                    lang().tooltip.delete
-                                                "
-                                            >
-                                                <TrashIcon class="w-4 h-4" />
-                                            </DangerButton>
                                         </div>
                                     </div>
                                 </td>
@@ -340,6 +437,182 @@ const select = () => {
                     class="flex justify-between items-center p-2 border-t border-slate-200 dark:border-slate-700"
                 >
                     <Pagination :links="props.transactions" :filters="data.params" />
+                </div>
+            </div>
+        </div>
+
+        
+        <h2 class="text-lg font-medium text-slate-900 dark:text-slate-100 mt-10 mb-5">
+            Pengeluaran Lainnya
+        </h2>
+
+        
+        <div class="space-y-4">
+            <div
+                class="relative bg-white dark:bg-slate-800 shadow sm:rounded-lg"
+            >
+                <div class="flex justify-between p-2">
+                    <TextInput
+                        v-model="data.params.search"
+                        type="text"
+                        class="block w-3/6 md:w-2/6 lg:w-1/6 rounded-lg"
+                        :placeholder="lang().placeholder.search"
+                    />
+                </div>
+                <div class="overflow-x-auto scrollbar-table">
+                    <table class="w-full">
+                        <thead
+                            class="uppercase text-sm border-t border-slate-200 dark:border-slate-700"
+                        >
+                            <tr class="dark:bg-slate-900/50 text-left">
+                                <th class="px-2 py-4 text-center">#</th>
+                                <th
+                                    class="px-2 py-4 cursor-pointer"
+                                    v-on:click="order('amount')"
+                                >
+                                    <div
+                                        class="flex justify-between items-center"
+                                    >
+                                        <span>Amount</span>
+                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-2 py-4 cursor-pointer"
+                                    v-on:click="order('description')"
+                                >
+                                    <div
+                                        class="flex justify-between items-center"
+                                    >
+                                        <span>Deskripsi</span>
+                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-2 py-4 cursor-pointer"
+                                    v-on:click="order('date')"
+                                >
+                                    <div
+                                        class="flex justify-between items-center"
+                                    >
+                                        <span>Tanggal</span>
+                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                    </div>
+                                </th>
+                                <th class="px-2 py-4 sr-only">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="(expense, index) in expenses.data"
+                                :key="index"
+                                class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-200/30 hover:dark:bg-slate-900/20"
+                            >
+                                <td
+                                    class="whitespace-nowrap py-4 px-2 sm:py-3 text-center"
+                                >
+                                    {{ ++index }}
+                                </td>
+                                <td class="whitespace-nowrap py-4 px-2 sm:py-3">
+                                    Rp{{ expense.amount.toLocaleString() }}
+                                </td>
+                                <td class="whitespace-nowrap py-4 px-2 sm:py-3">
+                                    {{ expense.description }}
+                                </td>
+                                <td class="whitespace-nowrap py-4 px-2 sm:py-3">
+                                    {{ expense.date }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        
+        <h2 class="text-lg font-medium text-slate-900 dark:text-slate-100 mt-10 mb-5">
+            Pendapatan Lainnya
+        </h2>
+
+        
+        <div class="space-y-4">
+            <div
+                class="relative bg-white dark:bg-slate-800 shadow sm:rounded-lg"
+            >
+                <div class="flex justify-between p-2">
+                    <TextInput
+                        v-model="data.params.search"
+                        type="text"
+                        class="block w-3/6 md:w-2/6 lg:w-1/6 rounded-lg"
+                        :placeholder="lang().placeholder.search"
+                    />
+                </div>
+                <div class="overflow-x-auto scrollbar-table">
+                    <table class="w-full">
+                        <thead
+                            class="uppercase text-sm border-t border-slate-200 dark:border-slate-700"
+                        >
+                            <tr class="dark:bg-slate-900/50 text-left">
+                                <th class="px-2 py-4 text-center">#</th>
+                                <th
+                                    class="px-2 py-4 cursor-pointer"
+                                    v-on:click="order('amount')"
+                                >
+                                    <div
+                                        class="flex justify-between items-center"
+                                    >
+                                        <span>Amount</span>
+                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-2 py-4 cursor-pointer"
+                                    v-on:click="order('description')"
+                                >
+                                    <div
+                                        class="flex justify-between items-center"
+                                    >
+                                        <span>Deskripsi</span>
+                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-2 py-4 cursor-pointer"
+                                    v-on:click="order('date')"
+                                >
+                                    <div
+                                        class="flex justify-between items-center"
+                                    >
+                                        <span>Tanggal</span>
+                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                    </div>
+                                </th>
+                                <th class="px-2 py-4 sr-only">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="(otherIncome, index) in otherIncomes.data"
+                                :key="index"
+                                class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-200/30 hover:dark:bg-slate-900/20"
+                            >
+                                <td
+                                    class="whitespace-nowrap py-4 px-2 sm:py-3 text-center"
+                                >
+                                    {{ ++index }}
+                                </td>
+                                <td class="whitespace-nowrap py-4 px-2 sm:py-3">
+                                    Rp{{ otherIncome.amount.toLocaleString() }}
+                                </td>
+                                <td class="whitespace-nowrap py-4 px-2 sm:py-3">
+                                    {{ otherIncome.description }}
+                                </td>
+                                <td class="whitespace-nowrap py-4 px-2 sm:py-3">
+                                    {{ otherIncome.date }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

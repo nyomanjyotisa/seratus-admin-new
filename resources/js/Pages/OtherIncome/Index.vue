@@ -230,7 +230,7 @@ const select = () => {
                                     {{ ++index }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
-                                    {{ otherIncome.amount }}
+                                    Rp{{ otherIncome.amount.toLocaleString() }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     {{ otherIncome.description }}
