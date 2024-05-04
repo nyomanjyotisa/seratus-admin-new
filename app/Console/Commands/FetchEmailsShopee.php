@@ -2,6 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Sale;
+use App\Models\Transaction;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use PhpImap\Mailbox;
@@ -36,6 +40,21 @@ class FetchEmailsShopee extends Command
         $invoicePattern = '/#(\w{12})/';
         $datePattern = '/(\d{1,2}\/\d{1,2}\/\d{4}|\d{1,2} \w{3} \d{4})/';
 
+        $monthNames = array(
+            'Jan' => 'January',
+            'Feb' => 'February',
+            'Mar' => 'March',
+            'Apr' => 'April',
+            'Mei' => 'May',
+            'Jun' => 'June',
+            'Jul' => 'July',
+            'Ags' => 'August',
+            'Sep' => 'September',
+            'Okt' => 'October',
+            'Nov' => 'November',
+            'Des' => 'December'
+        );  
+
         foreach ($allMails as $mailId) {
             $mail = $mailbox->getMail($mailId);
 
@@ -50,10 +69,57 @@ class FetchEmailsShopee extends Command
             
             Log::info("Date: $date[1]");
 
+            $datePatternCheck = '/^\d{2} (Jan|Feb|Mar|Apr|Mei|Jun|Jul|Ags|Sep|Okt|Nov|Des) \d{4}$/';
+
             // Log::info("Product Name: " . str_replace("\r", "", $productsName[1]));
-            Log::info("Product Name: " . json_encode($productsName[1]));
-            Log::info("Product Jumlah: " . json_encode($productsJumlah[1]));
-            Log::info("Product Harga: " . json_encode($productsHarga[1]));
+
+            $dateString = $date[1];
+            if (preg_match($datePatternCheck, $date[1])) {
+                foreach ($monthNames as $indonesianMonth => $englishMonth) {
+                    $dateString = str_replace($indonesianMonth, $englishMonth, $date[1]);
+                }
+                $dateObj = DateTime::createFromFormat('d M Y', $dateString);
+                if ($dateObj !== false) {
+                    $dateLast = $dateObj->format('Y-m-d H:i:s');
+                } else {
+                    $dateLast = now();
+                }
+            }else{
+                $dateLast = Carbon::createFromFormat('d/m/Y', $date[1])->format('Y-m-d');
+            }
+
+            $transaction = Transaction::create([
+                'unique_code' => $invoice[0],
+                'status' => 'pending',
+                'source' => 'shopee',
+                'date' => $dateLast,
+                'description' => '',
+            ]);
+
+            for ($i = 0; $i < count($productsName[1]); $i++) {
+                $name = trim(str_replace(array('"', "  "), "", str_replace("\\r\\n", '', json_encode($productsName[1][$i]))));
+                $quantity = json_encode($productsJumlah[1][$i]);
+                $price = str_replace('Rp ', '', str_replace(',', '', json_encode($productsHarga[1][$i])));
+
+                $quantity2 = filter_var($quantity, FILTER_SANITIZE_NUMBER_INT);
+                $price2 = filter_var($price, FILTER_SANITIZE_NUMBER_INT);
+                
+                Log::info("Product Name: " . $name);
+                Log::info("Product Jumlah: " . $quantity2);
+                Log::info("Product Harga: " . $price2);
+
+
+                Sale::create([
+                    'transaction_id' => $transaction->id,
+                    'amount' => $quantity2 * $price2,
+                    'description' => $quantity2 . 'X ' . $name,
+                    'date' => $dateLast,
+                ]);
+
+                $transaction->update([
+                    'description' => $transaction->description . ' ' . $quantity2 . 'X ' . $name,
+                ]);
+            }
             // Log::info("Product Harga: " . str_replace('Rp ', '', str_replace(',', '', $productsHarga[1])));
         }
 

@@ -8,17 +8,17 @@
         >
             <p class="text-center">
                 <a
-                    href="https://brive.erikwibowo.com"
+                    href="https://github.com/nyomanjyotisa"
                     target="_blank"
                     class="font-bold"
                     >{{ $page.props.app.name }}</a
                 >
                 ©️ {{ new Date().getFullYear() }}
                 <a
-                    href="https://github.com/erikwibowo"
+                    href="https://github.com/nyomanjyotisa"
                     target="_blank"
                     class="font-bold text-primary"
-                    >Erik Wibowo</a
+                    >Nyoman Jyotisa</a
                 >
             </p>
         </div>

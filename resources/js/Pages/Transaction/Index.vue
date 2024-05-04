@@ -257,7 +257,7 @@ const select = () => {
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     <p> {{ transaction.unique_code ?? '-' }} </p>
-                                    <p> {{ transaction.description ?? '-' }} </p>
+                                    <p> {{ transaction.description ? transaction.description.slice(0, 50) + '...' : '-' }} </p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     <p v-if="transaction.sales_count > 0" class="text-green-600">
