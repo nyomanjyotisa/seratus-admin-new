@@ -84,6 +84,10 @@ const select = () => {
         data.multipleSelect = false;
     }
 };
+const goToTransaction = (id) => {
+    window.location.href = '/transaction/' + id;
+}
+
 </script>
 
 <template>
@@ -234,6 +238,7 @@ const select = () => {
                             </tr>
                         </thead>
                         <tbody>
+                            
                             <tr
                                 v-for="(transaction, index) in transactions.data"
                                 :key="index"

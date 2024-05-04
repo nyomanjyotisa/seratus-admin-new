@@ -23,7 +23,7 @@ const form = useForm({
     unique_code: "",
     description: "",
     source: "",
-    date: "",
+    date: new Date().toISOString().substr(0, 10),
 });
 
 const create = () => {

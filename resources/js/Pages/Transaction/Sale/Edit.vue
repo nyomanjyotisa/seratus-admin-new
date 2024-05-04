@@ -34,7 +34,7 @@ const form = useForm({
     amount: '',
     price: '',
     description: '',
-    date: '',
+    date: new Date().toISOString().substr(0, 10),
     transaction_id: props.transaction.id,
 });
 

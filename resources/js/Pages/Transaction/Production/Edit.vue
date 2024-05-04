@@ -21,7 +21,7 @@ const emit = defineEmits(["close"]);
 const form = useForm({
     amount: '',
     description: '',
-    date: '',
+    date: new Date().toISOString().substr(0, 10),
     transaction_id: props.transaction.id,
 });
 
