@@ -6,6 +6,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SaldoController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -13,6 +14,7 @@ use App\Models\Expense;
 use App\Models\OtherIncome;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Saldo;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Application;
@@ -59,12 +61,18 @@ Route::get('/dashboard', function () {
 
     $laba = $total_pemasukan - $total_pengeluaran;
 
+    $saldomasuk = Saldo::where('type', 'masuk')->sum('amount');
+    $saldokeluar = Saldo::where('type', 'keluar')->sum('amount');
+
+    $sisasaldo = $saldomasuk - $saldokeluar;
+
     return Inertia::render('Dashboard', [
         'transaksiPending'          => (int) Transaction::where('status', 'pending')->get()->count(),
         'transaksiSelesai'          => (int) Transaction::where('status', 'done')->get()->count(),
         'total_pemasukan'           => $total_pemasukan,
         'total_pengeluaran'         => $total_pengeluaran,
         'laba'                      => $laba,
+        'saldo'                      => $sisasaldo,
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -74,6 +82,7 @@ Route::get('/setLang/{locale}', function ($locale) {
 })->name('setlang');
 
 Route::middleware('auth', 'verified')->group(function () {
+    Route::get('/transaction/fetch-email', [TransactionController::class, 'fetchEmail'])->name('transaction.fetch-email');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -89,6 +98,7 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::resource('/production', ProductionController::class)->except('create', 'edit');
     Route::resource('/expense', ExpenseController::class)->except('create', 'edit');
     Route::resource('/other-income', OtherIncomeController::class)->except('create', 'edit');
+    Route::resource('/kas', SaldoController::class)->except('create', 'edit');
 
     Route::resource('/role', RoleController::class)->except('create', 'show', 'edit');
     Route::post('/role/destroy-bulk', [RoleController::class, 'destroyBulk'])->name('role.destroy-bulk');

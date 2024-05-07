@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Transaction\TransactionIndexRequest;
 use App\Http\Requests\Transaction\TransactionStoreRequest;
 use App\Http\Requests\Transaction\TransactionUpdateRequest;
+use App\Http\Services\FetchEmailService;
 use App\Models\Expense;
 use App\Models\OtherIncome;
 use App\Models\Role;
@@ -19,6 +20,14 @@ use Inertia\Inertia;
 
 class TransactionController extends Controller
 {
+
+    protected $fetchEmailService;
+
+    public function __construct(FetchEmailService $fetchEmailService)
+    {
+        $this->fetchEmailService = $fetchEmailService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -259,5 +268,11 @@ class TransactionController extends Controller
             'total_pengeluaran'       => $total_pengeluaran,
             'laba'          => $laba,
         ]);
+    }
+
+    public function fetchEmail(){
+        $this->fetchEmailService->fetchTokped();
+        $this->fetchEmailService->fetchEtsy();
+        $this->fetchEmailService->fetchShopee();
     }
 }

@@ -9,6 +9,7 @@ const props = defineProps({
     total_pemasukan: Number,
     total_pengeluaran: Number,
     laba: Number,
+    saldo: Number,
 });
 </script>
 
@@ -45,6 +46,16 @@ const props = defineProps({
                     </div>
                 </div>
                 <div>
+                    <div
+                        class="rounded-none sm:rounded-lg px-4 py-6 flex justify-between bg-blue-600/70 dark:bg-blue-500/80 items-center overflow-hidden"
+                    >
+                        <div class="flex flex-col">
+                            <p class="text-4xl font-bold">Rp{{ props.saldo.toLocaleString() }}</p>
+                            <p class="text-md md:text-lg uppercase">
+                                Saldo Kas Saat Ini
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <div
