@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Transaction extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $guarded = [];
 
@@ -114,5 +116,10 @@ class Transaction extends Model
             $persentase_laba = ($this->sales()->sum('amount') - $this->productions()->sum('amount') - $this->expenses()->sum('amount') + $this->otherIncomes()->sum('amount'))/$this->sales()->sum('amount');
             return sprintf('%0.2f', $persentase_laba * 100);
         }
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
     }
 }

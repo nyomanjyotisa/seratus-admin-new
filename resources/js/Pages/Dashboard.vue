@@ -1,18 +1,14 @@
 <script setup>
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {
-    ChevronRightIcon,
-    KeyIcon,
-    ShieldCheckIcon,
-    UserIcon,
-} from "@heroicons/vue/24/solid";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head } from "@inertiajs/vue3";
 
 const props = defineProps({
-    users: Number,
-    roles: Number,
-    permissions: Number,
+    transaksiPending: Number,
+    transaksiSelesai: Number,
+    total_pemasukan: Number,
+    total_pengeluaran: Number,
+    laba: Number,
 });
 </script>
 
@@ -26,82 +22,64 @@ const props = defineProps({
             >
                 <div>
                     <div
-                        class="rounded-t-none sm:rounded-t-lg px-4 py-6 flex justify-between bg-blue-600/70 dark:bg-blue-500/80 items-center overflow-hidden"
+                        class="rounded-none sm:rounded-lg px-4 py-6 flex justify-between bg-amber-600/70 dark:bg-amber-500/80 items-center overflow-hidden"
                     >
                         <div class="flex flex-col">
-                            <p class="text-4xl font-bold">{{ props.users }}</p>
+                            <p class="text-4xl font-bold">{{ props.transaksiPending }}</p>
                             <p class="text-md md:text-lg uppercase">
-                                {{ lang().label.user }}
+                                Transaksi Pending
                             </p>
                         </div>
-                        <div>
-                            <UserIcon class="w-16 h-auto" />
-                        </div>
-                    </div>
-                    <div
-                        class="bg-blue-600 dark:bg-blue-600/80 rounded-b-none sm:rounded-b-lg p-2 overflow-hidden hover:bg-blue-600/90 dark:hover:bg-blue-600/70"
-                    >
-                        <Link
-                            :href="route('user.index')"
-                            class="flex justify-between items-center"
-                        >
-                            <p>{{ lang().label.more }}</p>
-                            <ChevronRightIcon class="w-5 h-5" />
-                        </Link>
                     </div>
                 </div>
                 <div>
                     <div
-                        class="rounded-t-none sm:rounded-t-lg px-4 py-6 flex justify-between bg-green-600/70 dark:bg-green-500/80 items-center overflow-hidden"
+                        class="rounded-none sm:rounded-lg px-4 py-6 flex justify-between bg-green-600/70 dark:bg-green-500/80 items-center overflow-hidden"
                     >
                         <div class="flex flex-col">
-                            <p class="text-4xl font-bold">{{ props.roles }}</p>
+                            <p class="text-4xl font-bold">{{ props.transaksiSelesai }}</p>
                             <p class="text-md md:text-lg uppercase">
-                                {{ lang().label.role }}
+                                Total Transaksi Selesai
                             </p>
                         </div>
-                        <div>
-                            <KeyIcon class="w-16 h-auto" />
-                        </div>
                     </div>
+                </div>
+                <div>
+                </div>
+                <div>
                     <div
-                        class="bg-green-600 dark:bg-green-600/80 rounded-b-none sm:rounded-b-lg p-2 overflow-hidden hover:bg-green-600/90 dark:hover:bg-green-600/70"
+                        class="rounded-none sm:rounded-lg px-4 py-6 flex justify-between bg-blue-600/70 dark:bg-blue-500/80 items-center overflow-hidden"
                     >
-                        <Link
-                            :href="route('role.index')"
-                            class="flex justify-between items-center"
-                        >
-                            <p>{{ lang().label.more }}</p>
-                            <ChevronRightIcon class="w-5 h-5" />
-                        </Link>
+                        <div class="flex flex-col">
+                            <p class="text-4xl font-bold">Rp{{ props.total_pemasukan.toLocaleString() }}</p>
+                            <p class="text-md md:text-lg uppercase">
+                                Total Omzet
+                            </p>
+                        </div>
                     </div>
                 </div>
                 <div>
                     <div
-                        class="rounded-t-none sm:rounded-t-lg px-4 py-6 flex justify-between bg-amber-600/70 dark:bg-amber-500/80 items-center overflow-hidden"
+                        class="rounded-none sm:rounded-lg px-4 py-6 flex justify-between bg-amber-600/70 dark:bg-amber-500/80 items-center overflow-hidden"
                     >
                         <div class="flex flex-col">
-                            <p class="text-4xl font-bold">
-                                {{ props.permissions }}
-                            </p>
+                            <p class="text-4xl font-bold">Rp{{ props.total_pengeluaran.toLocaleString() }}</p>
                             <p class="text-md md:text-lg uppercase">
-                                {{ lang().label.permission }}
+                                Total Pengeluaran Operasional
                             </p>
-                        </div>
-                        <div>
-                            <ShieldCheckIcon class="w-16 h-auto" />
                         </div>
                     </div>
+                </div>
+                <div>
                     <div
-                        class="bg-amber-600 dark:bg-amber-600/80 rounded-b-none sm:rounded-b-lg p-2 overflow-hidden hover:bg-amber-600/90 dark:hover:bg-amber-600/70"
+                        class="rounded-none sm:rounded-lg px-4 py-6 flex justify-between bg-green-600/70 dark:bg-green-500/80 items-center overflow-hidden"
                     >
-                        <Link
-                            :href="route('permission.index')"
-                            class="flex justify-between items-center"
-                        >
-                            <p>{{ lang().label.more }}</p>
-                            <ChevronRightIcon class="w-5 h-5" />
-                        </Link>
+                        <div class="flex flex-col">
+                            <p class="text-4xl font-bold">Rp{{ props.laba.toLocaleString() }}</p>
+                            <p class="text-md md:text-lg uppercase">
+                                Total Laba
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

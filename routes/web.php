@@ -9,9 +9,11 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Models\Expense;
 use App\Models\OtherIncome;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -34,10 +36,35 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
+
+    $transactions_for_calc = Transaction::where('status', 'done')->get();
+
+    $total_pemasukan = 0;
+
+    $total_pengeluaran = 0;
+
+    foreach($transactions_for_calc as $transaction){
+        $total_pemasukan += $transaction->sales_total;
+        $total_pemasukan += $transaction->other_incomes_total;
+
+        $total_pengeluaran += $transaction->expenses_total;
+        $total_pengeluaran += $transaction->productions_total;
+    }
+
+    $expenses_for_calc = Expense::where('transaction_id', '=', NULL)->sum('amount');
+    $otherIncomes_for_calc = OtherIncome::where('transaction_id', '=', NULL)->sum('amount');
+
+    $total_pemasukan += $otherIncomes_for_calc;
+    $total_pengeluaran += $expenses_for_calc;
+
+    $laba = $total_pemasukan - $total_pengeluaran;
+
     return Inertia::render('Dashboard', [
-        'users'         => (int) User::count(),
-        'roles'         => (int) Role::count(),
-        'permissions'   => (int) Permission::count(),
+        'transaksiPending'          => (int) Transaction::where('status', 'pending')->get()->count(),
+        'transaksiSelesai'          => (int) Transaction::where('status', 'done')->get()->count(),
+        'total_pemasukan'           => $total_pemasukan,
+        'total_pengeluaran'         => $total_pengeluaran,
+        'laba'                      => $laba,
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 

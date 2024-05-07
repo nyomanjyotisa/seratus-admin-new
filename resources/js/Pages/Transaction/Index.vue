@@ -288,11 +288,12 @@ const goToTransaction = (id) => {
                                         Produksi (0)
                                     </p>
                                     
-                                    <p v-if="transaction.expenses_count > 0" class="text-green-600">
-                                        Pengeluaran lain ({{ transaction.expenses_count }}) - Rp{{ transaction.expenses_total.toLocaleString() }}
-                                    </p>
-                                    <p v-else class="text-yellow-600">
+                                    
+                                    <p v-if="transaction.source != 'tokped'" class="text-yellow-600">
                                         Pengeluaran lain (0)
+                                    </p>
+                                    <p v-else :class="(transaction.source == 'tokped' && transaction.expenses_count == 0) ? 'text-red-600' : 'text-green-600'">
+                                        Pengeluaran lain ({{ transaction.expenses_count }}) - Rp{{ transaction.expenses_total.toLocaleString() }}
                                     </p>
                                     
                                     <p v-if="transaction.other_incomes_count > 0" class="text-green-600">
@@ -304,7 +305,7 @@ const goToTransaction = (id) => {
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     <p> <strong> Rp{{ transaction.total.toLocaleString() ?? '-' }} </strong> </p>
-                                    <p> {{ transaction.persentase_laba ?? '-' }} % </p>
+                                    <p :class="(transaction.persentase_laba > 60 || transaction.persentase_laba < 30 )  ? 'text-red-600' : ''"> {{ transaction.persentase_laba ?? '-' }} % </p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     {{ transaction.source }}
