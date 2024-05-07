@@ -151,7 +151,7 @@ const data = reactive({
                                     Rp{{ expense.amount.toLocaleString() }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
-                                    {{ expense.description }}
+                                    <p style="white-space: normal; word-break: break-all; display: block;">{{ expense.description ?? '-' }}</p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     {{ expense.date }}

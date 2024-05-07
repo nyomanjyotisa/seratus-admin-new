@@ -155,7 +155,7 @@ const select = () => {
                     <TextInput
                         v-model="data.params.search"
                         type="text"
-                        class="block w-3/6 md:w-2/6 lg:w-1/6 rounded-lg"
+                        class="ml-3 block w-full rounded-lg"
                         :placeholder="lang().placeholder.search"
                     />
                 </div>

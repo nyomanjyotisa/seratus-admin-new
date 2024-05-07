@@ -22,7 +22,7 @@ import SwitchLangNavbar from "@/Components/SwitchLangNavbar.vue";
                             </p>
                         </Link>
                         <div class="flex space-x-2 items-center">
-                            <SwitchLangNavbar />
+                            <!-- <SwitchLangNavbar /> -->
                             <SwitchDarkMode />
                         </div>
                     </div>

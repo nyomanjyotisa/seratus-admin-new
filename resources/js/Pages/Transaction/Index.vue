@@ -23,6 +23,7 @@ import DeleteBulk from "@/Pages/Transaction/DeleteBulk.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import { usePage } from "@inertiajs/vue3";
 import { Link } from "@inertiajs/vue3";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 const { _, debounce, pickBy } = pkg;
 const props = defineProps({
@@ -60,11 +61,19 @@ watch(
     () => _.cloneDeep(data.params),
     debounce(() => {
         let params = pickBy(data.params);
-        router.get(route("transaction.index"), params, {
-            replace: true,
-            preserveState: true,
-            preserveScroll: true,
-        });
+        if(props.title == 'Transaksi list Done'){
+            router.get(route("transaction.index.done"), params, {
+                replace: true,
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }else{
+            router.get(route("transaction.index"), params, {
+                replace: true,
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }
     }, 150)
 );
 
@@ -108,12 +117,12 @@ const goToTransaction = (id) => {
                     <Link
                         :href="route('transaction.index.done')"
                     >
-                        <PrimaryButton
+                        <SecondaryButton
                             class="rounded ml-3"
                             v-if="props.isDone == false"
                         >
                             Lihat Transaksi Selesai
-                        </PrimaryButton>
+                        </SecondaryButton>
                     </Link>
                     <Create
                         :show="data.createOpen"
@@ -162,7 +171,7 @@ const goToTransaction = (id) => {
                     <TextInput
                         v-model="data.params.search"
                         type="text"
-                        class="block w-3/6 md:w-2/6 lg:w-1/6 rounded-lg"
+                        class="ml-3 block w-full rounded-lg"
                         :placeholder="lang().placeholder.search"
                     />
                 </div>
@@ -262,7 +271,7 @@ const goToTransaction = (id) => {
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     <p> {{ transaction.unique_code ?? '-' }} </p>
-                                    <p> {{ transaction.description ? transaction.description.slice(0, 50) + '...' : '-' }} </p>
+                                    <p style="white-space: normal; word-break: break-all; display: block;"> {{ transaction.description ?? '-' }} </p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     <p v-if="transaction.sales_count > 0" class="text-green-600">

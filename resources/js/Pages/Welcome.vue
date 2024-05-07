@@ -30,7 +30,7 @@ defineProps({
                     </p>
                 </div>
                 <div class="flex space-x-2 items-center">
-                    <SwitchLangNavbar />
+                    <!-- <SwitchLangNavbar /> -->
                     <SwitchDarkMode />
                 </div>
             </div>

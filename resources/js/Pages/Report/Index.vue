@@ -97,6 +97,11 @@ const select = () => {
     }
 };
 
+
+const applyFilter = () => {
+    router.get(route("report",  { year: form.year, month: form.month}));
+};
+
 const years = [
     {
         value : '2022',
@@ -179,6 +184,7 @@ const months = [
                         v-model="form.year"
                         required
                         :dataSet="years"
+                        @change="applyFilter"
                     >
                     </SelectInput>
                     <SelectInput
@@ -187,9 +193,10 @@ const months = [
                         v-model="form.month"
                         required
                         :dataSet="months"
+                        @change="applyFilter"
                     >
                     </SelectInput>
-                    <Link
+                    <!-- <Link
                         :href="route('report', { year: form.year, month: form.month})"
                     >
                         <PrimaryButton
@@ -197,8 +204,8 @@ const months = [
                         >
                             Terapkan
                         </PrimaryButton>
-                    </Link>
-                    <Link
+                    </Link> -->
+                    <!-- <Link
                         :href="route('report.download', { year: form.year, month: form.month})"
                     >
                         <PrimaryButton
@@ -206,7 +213,7 @@ const months = [
                         >
                             Download Laporan
                         </PrimaryButton>
-                    </Link>
+                    </Link> -->
                     <Create
                         :show="data.createOpen"
                         @close="data.createOpen = false"
@@ -283,14 +290,14 @@ const months = [
             <div
                 class="relative bg-white dark:bg-slate-800 shadow sm:rounded-lg"
             >
-                <div class="flex justify-between p-2">
+                <!-- <div class="flex justify-between p-2">
                     <TextInput
                         v-model="data.params.search"
                         type="text"
-                        class="block w-3/6 md:w-2/6 lg:w-1/6 rounded-lg"
+                        class="ml-3 block w-full rounded-lg"
                         :placeholder="lang().placeholder.search"
                     />
-                </div>
+                </div> -->
                 <div class="overflow-x-auto scrollbar-table">
                     <table class="w-full">
                         <thead
@@ -300,57 +307,51 @@ const months = [
                                 <th class="px-2 py-4 text-center">#</th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('unique_code')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
                                         <span>Unique Code</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                        <!-- <ChevronUpDownIcon class="w-4 h-4" /> -->
                                     </div>
                                 </th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('status')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
                                         <span>Status</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                        <!-- <ChevronUpDownIcon class="w-4 h-4" /> -->
                                     </div>
                                 </th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('status')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
                                         <span>Laba</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                        <!-- <ChevronUpDownIcon class="w-4 h-4" /> -->
                                     </div>
                                 </th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('source')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
                                         <span>Sumber</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
                                     </div>
                                 </th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('date')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
                                         <span>Tanggal</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                        <!-- <ChevronUpDownIcon class="w-4 h-4" /> -->
                                     </div>
                                 </th>
                                 <th class="px-2 py-4 sr-only">Action</th>
@@ -369,7 +370,7 @@ const months = [
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     <p> {{ transaction.unique_code ?? '-' }} </p>
-                                    <p> {{ transaction.description ?? '-' }} </p>
+                                    <p style="white-space: normal; word-break: break-all; display: block;"> {{ transaction.description ?? '-' }} </p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     <p v-if="transaction.sales_count > 0" class="text-green-600">
@@ -451,14 +452,14 @@ const months = [
             <div
                 class="relative bg-white dark:bg-slate-800 shadow sm:rounded-lg"
             >
-                <div class="flex justify-between p-2">
+                <!-- <div class="flex justify-between p-2">
                     <TextInput
                         v-model="data.params.search"
                         type="text"
-                        class="block w-3/6 md:w-2/6 lg:w-1/6 rounded-lg"
+                        class="ml-3 block w-full rounded-lg"
                         :placeholder="lang().placeholder.search"
                     />
-                </div>
+                </div> -->
                 <div class="overflow-x-auto scrollbar-table">
                     <table class="w-full">
                         <thead
@@ -468,35 +469,32 @@ const months = [
                                 <th class="px-2 py-4 text-center">#</th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('amount')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
                                         <span>Amount</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                        <!-- <ChevronUpDownIcon class="w-4 h-4" /> -->
                                     </div>
                                 </th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('description')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
                                         <span>Deskripsi</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                        <!-- <ChevronUpDownIcon class="w-4 h-4" /> -->
                                     </div>
                                 </th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('date')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
                                         <span>Tanggal</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
+                                        <!-- <ChevronUpDownIcon class="w-4 h-4" /> -->
                                     </div>
                                 </th>
                                 <th class="px-2 py-4 sr-only">Action</th>
@@ -517,7 +515,7 @@ const months = [
                                     Rp{{ expense.amount.toLocaleString() }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
-                                    {{ expense.description }}
+                                    <p style="white-space: normal; word-break: break-all; display: block;">{{ expense.description ?? '-' }}</p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     {{ expense.date }}
@@ -539,14 +537,14 @@ const months = [
             <div
                 class="relative bg-white dark:bg-slate-800 shadow sm:rounded-lg"
             >
-                <div class="flex justify-between p-2">
+                <!-- <div class="flex justify-between p-2">
                     <TextInput
                         v-model="data.params.search"
                         type="text"
-                        class="block w-3/6 md:w-2/6 lg:w-1/6 rounded-lg"
+                        class="ml-3 block w-full rounded-lg"
                         :placeholder="lang().placeholder.search"
                     />
-                </div>
+                </div> -->
                 <div class="overflow-x-auto scrollbar-table">
                     <table class="w-full">
                         <thead
@@ -556,35 +554,29 @@ const months = [
                                 <th class="px-2 py-4 text-center">#</th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('amount')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
                                         <span>Amount</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
                                     </div>
                                 </th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('description')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
                                         <span>Deskripsi</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
                                     </div>
                                 </th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
-                                    v-on:click="order('date')"
                                 >
                                     <div
                                         class="flex justify-between items-center"
                                     >
                                         <span>Tanggal</span>
-                                        <ChevronUpDownIcon class="w-4 h-4" />
                                     </div>
                                 </th>
                                 <th class="px-2 py-4 sr-only">Action</th>
@@ -605,7 +597,7 @@ const months = [
                                     Rp{{ otherIncome.amount.toLocaleString() }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
-                                    {{ otherIncome.description }}
+                                    <p style="white-space: normal; word-break: break-all; display: block;">{{ otherIncome.description ?? '-' }}</p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     {{ otherIncome.date }}

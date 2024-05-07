@@ -1,0 +1,74 @@
+Date,Sumber,ID,Nilai,Keterangan
+2023-12-24 17:16:00,shopee,231218GNF68D7V,277640,Penghasilan dari Pesanan #231218GNF68D7V
+2023-12-19 11:08:00,shopee,,-111000,Isi Ulang Saldo Iklan/Koin Penjual
+2023-12-27 20:52:25,tokped,INV/20231222/MPL/3639103319,-13770,Pemotongan Biaya Layanan Power Merchant Pro - INV/20231222/MPL/3639103319
+2023-12-27 20:52:25,tokped,,306000,Transaksi Penjualan Berhasil - INV/20231222/MPL/3639103319
+2023-12-24 10:10:23,tokped,INV/20231121/MPL/3577343220,-101250,Pemotongan Biaya Layanan Power Merchant Pro - INV/20231121/MPL/3577343220
+2023-12-24 10:10:23,tokped,INV/20231121/MPL/3577343220,-24000,"Pemotongan Selisih Ongkir via JNE (harga aktual lebih tinggi dari invoice)
+ INV/20231121/MPL/3577343220 Harga aktual = Rp 48.000, Berat Aktual = 2 kg"
+2023-12-24 10:10:23,tokped,INV/20231121/MPL/3577343220,2250000,Transaksi Penjualan Berhasil - INV/20231121/MPL/3577343220
+2023-12-22 18:47:24,tokped,INV/20231214/MPL/3624196632,-13770,Pemotongan Biaya Layanan Power Merchant Pro - INV/20231214/MPL/3624196632
+2023-12-22 18:47:24,tokped,INV/20231214/MPL/3624196632,306000,Transaksi Penjualan Berhasil - INV/20231214/MPL/3624196632
+2023-12-22 16:12:21,tokped,,6984,Cashback atas pengiriman cashless JNE Cashless JTR Nov 2023 | Total Ongkos Kirim Rp 240000
+2023-12-19 23:03:05,tokped,INV/20231127/MPL/3589215607,-12780,Pemotongan Biaya Layanan Power Merchant Pro - INV/20231127/MPL/3589215607
+2023-12-19 23:03:05,tokped,INV/20231127/MPL/3589215607,284000,Transaksi Penjualan Berhasil - INV/20231127/MPL/3589215607
+2023-12-19 11:20:15,tokped,INV/20231122/MPL/3578084541,-11475,Pemotongan Biaya Layanan Power Merchant Pro - INV/20231122/MPL/3578084541
+2023-12-19 11:20:15,tokped,INV/20231122/MPL/3578084541,255000,Transaksi Penjualan Berhasil - INV/20231122/MPL/3578084541
+2023-12-14 16:09:36,tokped,,-300000,Penggunaan Saldo Tokopedia untuk pembelian dari Tokopedia Ads. [ID Transaksi: 4352823184]
+2023-12-14 11:07:18,tokped,INV/20231206/MPL/3606408433,-53550,Pemotongan Biaya Layanan Power Merchant Pro - INV/20231206/MPL/3606408433
+2023-12-14 11:07:18,tokped,INV/20231206/MPL/3606408433,1190000,Transaksi Penjualan Berhasil - INV/20231206/MPL/3606408433
+2023-12-07 8:12:18,tokped,INV/20231105/MPL/3547748452,-63495,Pemotongan Biaya Layanan Power Merchant Pro - INV/20231105/MPL/3547748452
+2023-12-07 8:12:17,tokped,INV/20231105/MPL/3547748452,1411000,Transaksi Penjualan Berhasil - INV/20231105/MPL/3547748452
+2023-12-06 15:57:49,tokped,INV/20231120/MPL/3574504155,-47925,Pemotongan Biaya Layanan Power Merchant Pro - INV/20231120/MPL/3574504155
+2023-12-06 15:57:49,tokped,INV/20231120/MPL/3574504155,1065000,Transaksi Penjualan Berhasil - INV/20231120/MPL/3574504155
+2023-12-31 0:00:00,etsy,3166740572,-33190,VAT: Processing Fee Order #3166740572
+2023-12-31 0:00:00,etsy,3166740572,-108067,VAT: Offsite Ads fee order: 3166740572
+2023-12-31 0:00:00,etsy,3166740572,-16509,VAT: shipping_transaction
+2023-12-31 0:00:00,etsy,3166740572,-30320,VAT: transaction transaction: 3913705640
+2023-12-31 0:00:00,etsy,3166740572,-982425,Fee for sale made through Offsite Ads Order #3166740572
+2023-12-31 0:00:00,etsy,3166740572,-150085,Transaction fee: Shipping Order #3166740572
+2023-12-31 0:00:00,etsy,3166740572,-275633,Transaction fee: Balinese Handmade Wooden Octopus Statue ... Order #3166740572
+2023-12-31 0:00:00,etsy,3166740572,-301728,Processing fee Order #3166740572
+2023-12-31 0:00:00,etsy,3166740572,6549500,Payment for Order #3166740572
+2023-12-31 0:00:00,etsy,3166740572,-339,VAT: auto-renew sold auto-renew sold : 1318315957
+2023-12-31 0:00:00,etsy,3166740572,-3078,Listing fee ($0.20 USD) Listing #1318315957
+2023-12-30 0:00:00,etsy,,-339,VAT: auto-renew expired auto-renew expired: 1295724905
+2023-12-30 0:00:00,etsy,,-3078,Listing fee ($0.20 USD) Listing #1295724905
+2023-12-27 0:00:00,etsy,,-339,VAT: auto-renew expired auto-renew expired: 1295713785
+2023-12-27 0:00:00,etsy,,-3081,Listing fee ($0.20 USD) Listing #1295713785
+2023-12-25 0:00:00,etsy,,-340,VAT: auto-renew expired auto-renew expired: 1304259282
+2023-12-25 0:00:00,etsy,,-3093,Listing fee ($0.20 USD) Listing #1304259282
+2023-12-21 0:00:00,etsy,3157969058,-340,VAT: auto-renew sold auto-renew sold : 1281646982
+2023-12-21 0:00:00,etsy,3157969058,-3089,Listing fee ($0.20 USD) Listing #1281646982
+2023-12-21 0:00:00,etsy,3157969058,-340,VAT: auto-renew sold auto-renew sold : 1295709739
+2023-12-21 0:00:00,etsy,3157969058,-3089,Listing fee ($0.20 USD) Listing #1295709739
+2023-12-21 0:00:00,etsy,3157969058,-340,VAT: auto-renew sold auto-renew sold : 1304257410
+2023-12-21 0:00:00,etsy,3157969058,-3089,Listing fee ($0.20 USD) Listing #1304257410
+2023-12-21 0:00:00,etsy,3157969058,-340,VAT: auto-renew sold auto-renew sold : 1304256146
+2023-12-21 0:00:00,etsy,3157969058,-3089,Listing fee ($0.20 USD) Listing #1304256146
+2023-12-21 0:00:00,etsy,3157969058,-340,VAT: auto-renew sold auto-renew sold : 1281645620
+2023-12-21 0:00:00,etsy,3157969058,-3089,Listing fee ($0.20 USD) Listing #1281645620
+2023-12-21 0:00:00,etsy,3157969058,-340,VAT: auto-renew sold auto-renew sold : 1295667855
+2023-12-21 0:00:00,etsy,3157969058,-3089,Listing fee ($0.20 USD) Listing #1295667855
+2023-12-21 0:00:00,etsy,3157969058,-92572,VAT: Processing Fee Order #3157969058
+2023-12-21 0:00:00,etsy,3157969058,-24875,VAT: shipping_transaction
+2023-12-21 0:00:00,etsy,3157969058,-10783,VAT: transaction transaction: 3902400494
+2023-12-21 0:00:00,etsy,3157969058,-63886,VAT: transaction transaction: 3902400498
+2023-12-21 0:00:00,etsy,3157969058,-3430,VAT: transaction transaction: 3903263063
+2023-12-21 0:00:00,etsy,3157969058,-4189,VAT: transaction transaction: 3903263061
+2023-12-21 0:00:00,etsy,3157969058,-8966,VAT: transaction transaction: 3903263065
+2023-12-21 0:00:00,etsy,3157969058,-8966,VAT: transaction transaction: 3903263067
+2023-12-21 0:00:00,etsy,3157969058,-98028,Transaction fee: Balinese Carving Wall Hanging Wood Flowe... Order #3157969058
+2023-12-21 0:00:00,etsy,3157969058,-226135,Transaction fee: Shipping Order #3157969058
+2023-12-21 0:00:00,etsy,3157969058,-580783,Transaction fee: Balinese Handmade Wooden Narasimha Statu... Order #3157969058
+2023-12-21 0:00:00,etsy,3157969058,-38084,Transaction fee: Balinese Handmade Pelican Wood Statue 11... Order #3157969058
+2023-12-21 0:00:00,etsy,3157969058,-31186,Transaction fee: Balinese Handmade Wooden Owl Statue Size... Order #3157969058
+2023-12-21 0:00:00,etsy,3157969058,-81512,Transaction fee: Balinese Carving Wood Wall Hanging Flowe... Order #3157969058
+2023-12-21 0:00:00,etsy,3157969058,-81512,Transaction fee: Balinese Carving Wood Wall Hanging Flowe... Order #3157969058
+2023-12-21 0:00:00,etsy,3157969058,-1049936,Sales tax paid by buyer Order #3157969058
+2023-12-21 0:00:00,etsy,3157969058,-841567,Processing fee Order #3157969058
+2023-12-21 0:00:00,etsy,3157969058,18545936,Payment for Order #3157969058
+2023-12-15 0:00:00,etsy,,-342,VAT: auto-renew expired auto-renew expired: 1281701176
+2023-12-15 0:00:00,etsy,,-3105,Listing fee ($0.20 USD) Listing #1281701176
+2023-12-02 0:00:00,etsy,,-341,VAT: auto-renew expired auto-renew expired: 1295699805
+2023-12-02 0:00:00,etsy,,-3097,Listing fee ($0.20 USD) Listing #1295699805

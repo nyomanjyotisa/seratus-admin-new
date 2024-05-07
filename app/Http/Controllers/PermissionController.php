@@ -38,7 +38,7 @@ class PermissionController extends Controller
         if ($request->has(['field', 'order'])) {
             $permissions->orderBy($request->field, $request->order);
         }
-        $perPage = $request->has('perPage') ? $request->perPage : 10;
+        $perPage = $request->has('perPage') ? $request->perPage : 20;
         return Inertia::render('Permission/Index', [
             'title'         => __('app.label.permission'),
             'filters'       => $request->all(['search', 'field', 'order']),

@@ -30,7 +30,7 @@ class ExpenseController extends Controller
         }else{
             $expenses->orderBy('id', 'DESC');
         }
-        $perPage = $request->has('perPage') ? $request->perPage : 10;
+        $perPage = $request->has('perPage') ? $request->perPage : 20;
         $roles = Role::get();
         return Inertia::render('Expense/Index', [
             'title'         => 'Expense',

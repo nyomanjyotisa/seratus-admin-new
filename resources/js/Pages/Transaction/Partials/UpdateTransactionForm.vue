@@ -33,7 +33,7 @@ const form = useForm({
     status: props.transaction.status,
     source: props.transaction.source,
     date: date.toISOString().slice(0,10),
-    closed_at: props.transaction.closed_at ? closed_at.toISOString().slice(0,10) : '',
+    closed_at: props.transaction.closed_at ? closed_at.toISOString().slice(0,10) : null,
 });
 
 const statuses = [

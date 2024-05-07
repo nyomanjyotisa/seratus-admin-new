@@ -154,7 +154,7 @@ const select = () => {
                     <TextInput
                         v-model="data.params.search"
                         type="text"
-                        class="block w-3/6 md:w-2/6 lg:w-1/6 rounded-lg"
+                        class="ml-3 block w-full rounded-lg"
                         :placeholder="lang().placeholder.search"
                     />
                 </div>
@@ -164,12 +164,12 @@ const select = () => {
                             class="uppercase text-sm border-t border-slate-200 dark:border-slate-700"
                         >
                             <tr class="dark:bg-slate-900/50 text-left">
-                                <th class="px-2 py-4 text-center">
+                                <!-- <th class="px-2 py-4 text-center">
                                     <Checkbox
                                         v-model:checked="data.multipleSelect"
                                         @change="selectAll"
                                     />
-                                </th>
+                                </th> -->
                                 <th class="px-2 py-4 text-center">#</th>
                                 <th
                                     class="px-2 py-4 cursor-pointer"
@@ -213,7 +213,7 @@ const select = () => {
                                 :key="index"
                                 class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-200/30 hover:dark:bg-slate-900/20"
                             >
-                                <td
+                                <!-- <td
                                     class="whitespace-nowrap py-4 px-2 sm:py-3 text-center"
                                 >
                                     <input
@@ -223,7 +223,7 @@ const select = () => {
                                         :value="expense.id"
                                         v-model="data.selectedId"
                                     />
-                                </td>
+                                </td> -->
                                 <td
                                     class="whitespace-nowrap py-4 px-2 sm:py-3 text-center"
                                 >
@@ -233,7 +233,7 @@ const select = () => {
                                     Rp{{ expense.amount.toLocaleString() }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
-                                    {{ expense.description }}
+                                    <p style="white-space: normal; word-break: break-all; display: block;"> {{ expense.description ?? '-' }}</p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     {{ expense.date }}

@@ -43,7 +43,7 @@ class RoleController extends Controller
             $permissions = Permission::whereNotIn('name', ['create permission', 'read permission', 'update permission', 'delete permission'])->latest();
             $roles->where('name', '<>', 'superadmin');
         }
-        $perPage = $request->has('perPage') ? $request->perPage : 10;
+        $perPage = $request->has('perPage') ? $request->perPage : 20;
         return Inertia::render('Role/Index', [
             'title'         => __('app.label.role'),
             'filters'       => $request->all(['search', 'field', 'order']),

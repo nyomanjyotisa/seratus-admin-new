@@ -29,7 +29,7 @@ class OtherIncomeController extends Controller
         }else{
             $otherIncomes->orderBy('id', 'DESC');
         }
-        $perPage = $request->has('perPage') ? $request->perPage : 10;
+        $perPage = $request->has('perPage') ? $request->perPage : 20;
         return Inertia::render('OtherIncome/Index', [
             'title'         => 'Pendapatan Lainnya',
             'filters'       => $request->all(['search', 'field', 'order']),

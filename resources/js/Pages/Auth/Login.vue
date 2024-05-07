@@ -78,13 +78,7 @@ const submit = () => {
                 </label>
             </div>
             <div class="flex items-center justify-between mt-4">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="underline text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-slate-800"
-                >
-                    {{ lang().label.lost_password }}
-                </Link>
+                <div></div>
                 <PrimaryButton
                     class="ml-4"
                     :class="{ 'opacity-25': form.processing }"

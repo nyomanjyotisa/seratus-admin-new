@@ -40,7 +40,7 @@ class UserController extends Controller
         if ($request->has(['field', 'order'])) {
             $users->orderBy($request->field, $request->order);
         }
-        $perPage = $request->has('perPage') ? $request->perPage : 10;
+        $perPage = $request->has('perPage') ? $request->perPage : 20;
         $role = auth()->user()->roles->pluck('name')[0];
         $roles = Role::get();
         if ($role != 'superadmin') {

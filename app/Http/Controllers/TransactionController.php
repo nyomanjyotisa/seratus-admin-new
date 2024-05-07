@@ -10,6 +10,7 @@ use App\Models\OtherIncome;
 use App\Models\Role;
 use App\Models\Sale;
 use App\Models\Transaction;
+use Barryvdh\DomPDF\PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,15 +29,17 @@ class TransactionController extends Controller
         $transactions = Transaction::query();
         $transactions->where('status', 'pending');
         if ($request->has('search')) {
-            $transactions->where('unique_code', 'LIKE', "%" . $request->search . "%");
-            $transactions->orWhere('description', 'LIKE', "%" . $request->search . "%");
+            $transactions->where(function($query) use ($request) {
+                $query->where('unique_code', 'LIKE', "%" . $request->search . "%")
+                      ->orWhere('description', 'LIKE', "%" . $request->search . "%");
+            });
         }
         if ($request->has(['field', 'order'])) {
             $transactions->orderBy($request->field, $request->order);
         }else{
             $transactions->orderBy('id', 'DESC');
         }
-        $perPage = $request->has('perPage') ? $request->perPage : 10;
+        $perPage = $request->has('perPage') ? $request->perPage : 20;
         $roles = Role::get();
         return Inertia::render('Transaction/Index', [
             'title'         => 'Transaksi',
@@ -59,13 +62,15 @@ class TransactionController extends Controller
         $transactions = Transaction::query();
         $transactions->where('status', 'done');
         if ($request->has('search')) {
-            $transactions->where('unique_code', 'LIKE', "%" . $request->search . "%");
-            $transactions->orWhere('description', 'LIKE', "%" . $request->search . "%");
+            $transactions->where(function($query) use ($request) {
+                $query->where('unique_code', 'LIKE', "%" . $request->search . "%")
+                      ->orWhere('description', 'LIKE', "%" . $request->search . "%");
+            });
         }
         if ($request->has(['field', 'order'])) {
             $transactions->orderBy($request->field, $request->order);
         }
-        $perPage = $request->has('perPage') ? $request->perPage : 10;
+        $perPage = $request->has('perPage') ? $request->perPage : 20;
         $roles = Role::get();
         return Inertia::render('Transaction/Index', [
             'title'         => 'Transaksi list Done',
@@ -73,7 +78,7 @@ class TransactionController extends Controller
             'perPage'       => (int) $perPage,
             'transactions'  => $transactions->paginate($perPage),
             'roles'         => $roles,
-            'breadcrumbs'   => [['label' => 'Transaksi', 'href' => route('transaction.index')]],
+            'breadcrumbs'   => [['label' => 'Transaksi Done', 'href' => route('transaction.index.done')]],
             'isDone'        => true,
         ]);
     }
@@ -197,7 +202,7 @@ class TransactionController extends Controller
 
     public function report(Request $request, $year, $month){
 
-        $perPage = $request->has('perPage') ? $request->perPage : 100;
+        $perPage = $request->has('perPage') ? $request->perPage : 200;
         $date = Carbon::createFromFormat('Y-m-d', $year . '-' . $month . '-15');
         
         $transactions = Transaction::query();
