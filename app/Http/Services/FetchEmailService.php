@@ -28,7 +28,7 @@ class FetchEmailService
         $date = date('d-M-Y', strtotime($last_tokped_email_fetch->value));
 
         $last_tokped_email_fetch->update([
-            'value' => date('d-M-Y', strtotime('+1 day'))
+            'value' => date('d-M-Y')
         ]);
 
         Log::alert('$date');
@@ -70,47 +70,52 @@ class FetchEmailService
             Log::info($invoice[0]);
             Log::info($date[1]);
 
+            $findTransaction = Transaction::where('unique_code', $invoice[0])->get();
 
-            $dateString = $date[1];
-            foreach ($monthNames as $indonesianMonth => $englishMonth) {
-                $dateString = str_replace($indonesianMonth, $englishMonth, $dateString);
-            }      
-            $dateObj = DateTime::createFromFormat('d M Y', $dateString);
-            if ($dateObj !== false) {
-                $dateLast = $dateObj->format('Y-m-d H:i:s');
-            } else {
-                $dateLast = now();
-            }
-            Log::info($dateLast);
+            if($findTransaction){
+                Log::info('Already Exist: ' . $invoice[0]);
+            }else{
+                $dateString = $date[1];
+                foreach ($monthNames as $indonesianMonth => $englishMonth) {
+                    $dateString = str_replace($indonesianMonth, $englishMonth, $dateString);
+                }      
+                $dateObj = DateTime::createFromFormat('d M Y', $dateString);
+                if ($dateObj !== false) {
+                    $dateLast = $dateObj->format('Y-m-d H:i:s');
+                } else {
+                    $dateLast = now();
+                }
+                Log::info($dateLast);
 
-            $transaction = Transaction::create([
-                'unique_code' => $invoice[0],
-                'status' => 'pending',
-                'source' => 'tokped',
-                'date' => $dateLast,
-                'description' => '',
-            ]);
-
-            foreach ($products as $product) {
-                $name = trim($product[1]);
-                $quantity = $product[2];
-                $price = intval(str_replace('.', '', $product[3]));
-                
-                Log::info($name);
-                Log::info($quantity);
-                Log::info($price);
-                Log::info(' ');
-
-                Sale::create([
-                    'transaction_id' => $transaction->id,
-                    'amount' => $quantity * $price,
-                    'description' => $quantity . 'X ' . $name,
+                $transaction = Transaction::create([
+                    'unique_code' => $invoice[0],
+                    'status' => 'pending',
+                    'source' => 'tokped',
                     'date' => $dateLast,
+                    'description' => '',
                 ]);
 
-                $transaction->update([
-                    'description' => $transaction->description . ' ' . $quantity . 'X ' . $name,
-                ]);
+                foreach ($products as $product) {
+                    $name = trim($product[1]);
+                    $quantity = $product[2];
+                    $price = intval(str_replace('.', '', $product[3]));
+                    
+                    Log::info($name);
+                    Log::info($quantity);
+                    Log::info($price);
+                    Log::info(' ');
+
+                    Sale::create([
+                        'transaction_id' => $transaction->id,
+                        'amount' => $quantity * $price,
+                        'description' => $quantity . 'X ' . $name,
+                        'date' => $dateLast,
+                    ]);
+
+                    $transaction->update([
+                        'description' => $transaction->description . ' ' . $quantity . 'X ' . $name,
+                    ]);
+                }
             }
         }
 
@@ -134,7 +139,7 @@ class FetchEmailService
         $date = date('d-M-Y', strtotime($last_etsy_email_fetch->value));
 
         $last_etsy_email_fetch->update([
-            'value' => date('d-M-Y', strtotime('+1 day'))
+            'value' => date('d-M-Y')
         ]);
 
         Log::alert('$date');
@@ -171,68 +176,77 @@ class FetchEmailService
             preg_match_all('/<div[^>]*>\s*Quantity:\s*([0-9]+)\s*<\/div>/', $mail->textHtml, $quantity);
             preg_match_all('/<div[^>]*>\s*Price:\s*([^<]+)\s*<\/div>/', $mail->textHtml, $price);
 
-            Log::info($orderNumber[1]);
-            Log::info(isset($date[1]) ? $date[1] : $mail->date);
-
-            Log::info(json_encode($name[1]));
-            Log::info(json_encode($quantity[1]));
-            Log::info(json_encode($price[1]));
-
-            $datePatternCheck = '/^\d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec), \d{4}$/';
-            $dateString = isset($date[1]) ? $date[1] : $mail->date;
-            if (preg_match($datePatternCheck, $dateString)) {
-                foreach ($monthNames as $indonesianMonth => $englishMonth) {
-                    $dateString = str_replace(($indonesianMonth . ','), $englishMonth, $dateString);
-                }
-                $dateObj = DateTime::createFromFormat('d M Y', $dateString);
-                if ($dateObj !== false) {
-                    $dateLast = $dateObj->format('Y-m-d H:i:s');
-                } else {
-                    $dateLast = now();
-                }
-            }else{
-                $dateLast = Carbon::createFromFormat('Y-m-d H:i:s', $dateString)->format('Y-m-d');
-            }
-
-            $transaction = Transaction::create([
-                'unique_code' => $orderNumber[1],
-                'status' => 'pending',
-                'source' => 'etsy',
-                'date' => $dateLast,
-                'description' => '',
-            ]);            
             
-            for ($i = 0; $i < count($quantity[1]); $i++) {
 
-                Log::info('$name'.json_encode($name));
-                if($name[1][0] == 'Learn more'){
-                    $nameFinal = $name[1][$i+1];
+            $findTransaction = Transaction::where('unique_code', $orderNumber[1])->get();
+
+            if($findTransaction){
+                Log::info('Already Exist: ' . $orderNumber[1]);
+            }else{
+                Log::info($orderNumber[1]);
+                Log::info(isset($date[1]) ? $date[1] : $mail->date);
+
+                Log::info(json_encode($name[1]));
+                Log::info(json_encode($quantity[1]));
+                Log::info(json_encode($price[1]));
+
+                $datePatternCheck = '/^\d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec), \d{4}$/';
+                $dateString = isset($date[1]) ? $date[1] : $mail->date;
+                if (preg_match($datePatternCheck, $dateString)) {
+                    foreach ($monthNames as $indonesianMonth => $englishMonth) {
+                        $dateString = str_replace(($indonesianMonth . ','), $englishMonth, $dateString);
+                    }
+                    $dateObj = DateTime::createFromFormat('d M Y', $dateString);
+                    if ($dateObj !== false) {
+                        $dateLast = $dateObj->format('Y-m-d H:i:s');
+                    } else {
+                        $dateLast = now();
+                    }
                 }else{
-                    $nameFinal = $name[1][$i];
+                    $dateLast = Carbon::createFromFormat('Y-m-d H:i:s', $dateString)->format('Y-m-d');
                 }
 
-                $name0 = trim(str_replace(array('"', "  "), "", str_replace("\\r\\n", '', json_encode($nameFinal))));
-                $quantity0 = json_encode($quantity[1][$i]);
-                $price0 = str_replace('Rp ', '', str_replace(',', '', json_encode($price[1][$i])));
-
-                $quantity2 = filter_var($quantity0, FILTER_SANITIZE_NUMBER_INT);
-                $price2 = filter_var($price0, FILTER_SANITIZE_NUMBER_INT);
-
-                
-                Log::info(json_encode($name0));
-                Log::info(json_encode($quantity2));
-                Log::info(json_encode($price2));
-
-                Sale::create([
-                    'transaction_id' => $transaction->id,
-                    'amount' => $quantity2 * $price2,
-                    'description' => $quantity2 . 'X ' . $name0,
+                $transaction = Transaction::create([
+                    'unique_code' => $orderNumber[1],
+                    'status' => 'pending',
+                    'source' => 'etsy',
                     'date' => $dateLast,
-                ]);
+                    'description' => '',
+                ]);            
+                
+                for ($i = 0; $i < count($quantity[1]); $i++) {
 
-                $transaction->update([
-                    'description' => $transaction->description . ' ' . $quantity2 . 'X ' . $name0,
-                ]);
+                    Log::info('$name'.json_encode($name));
+                    if($name[1][0] == 'Learn more'){
+                        $nameFinal = $name[1][$i+1];
+                    }else{
+                        $nameFinal = $name[1][$i];
+                    }
+
+                    $name0 = trim(str_replace(array('"', "  "), "", str_replace("\\r\\n", '', json_encode($nameFinal))));
+                    $quantity0 = json_encode($quantity[1][$i]);
+                    $price0 = str_replace('Rp ', '', str_replace(',', '', json_encode($price[1][$i])));
+
+                    $quantity2 = filter_var($quantity0, FILTER_SANITIZE_NUMBER_INT);
+                    $price2 = filter_var($price0, FILTER_SANITIZE_NUMBER_INT);
+
+                    
+                    Log::info(json_encode($name0));
+                    Log::info(json_encode($quantity2));
+                    Log::info(json_encode($price2));
+
+                    Sale::create([
+                        'transaction_id' => $transaction->id,
+                        'amount' => $quantity2 * $price2,
+                        'description' => $quantity2 . 'X ' . $name0,
+                        'date' => $dateLast,
+                    ]);
+
+                    $transaction->update([
+                        'description' => $transaction->description . ' ' . $quantity2 . 'X ' . $name0,
+                    ]);
+                }
+                    
             }
         }
 
@@ -253,7 +267,7 @@ class FetchEmailService
         $date = date('d-M-Y', strtotime($last_shopee_email_fetch->value));
 
         $last_shopee_email_fetch->update([
-            'value' => date('d-M-Y', strtotime('+1 day'))
+            'value' => date('d-M-Y')
         ]);
 
         
@@ -300,60 +314,68 @@ class FetchEmailService
             preg_match_all('/<td[^>]*>\s*Harga:\s*<\/td>\s*<td[^>]*>\s*([^<]+)\s*<\/td>/i', $mail->textHtml, $productsHarga);
 
             $invoiceNumber = $invoice[0];
-            Log::info("Invoice Number: $invoiceNumber");
-            
-            Log::info("Date: $date[1]");
 
-            $datePatternCheck = '/^\d{2} (Jan|Feb|Mar|Apr|Mei|Jun|Jul|Ags|Sep|Okt|Nov|Des) \d{4}$/';
+            $findTransaction = Transaction::where('unique_code', $invoiceNumber)->get();
 
-            // Log::info("Product Name: " . str_replace("\r", "", $productsName[1]));
-
-            $dateString = $date[1];
-            if (preg_match($datePatternCheck, $date[1])) {
-                foreach ($monthNames as $indonesianMonth => $englishMonth) {
-                    $dateString = str_replace($indonesianMonth, $englishMonth, $date[1]);
-                }
-                $dateObj = DateTime::createFromFormat('d M Y', $dateString);
-                if ($dateObj !== false) {
-                    $dateLast = $dateObj->format('Y-m-d H:i:s');
-                } else {
-                    $dateLast = now();
-                }
+            if($findTransaction){
+                Log::info('Already Exist: ' . $invoiceNumber);
             }else{
-                $dateLast = Carbon::createFromFormat('d/m/Y', $date[1])->format('Y-m-d');
-            }
 
-            $transaction = Transaction::create([
-                'unique_code' => $invoice[0],
-                'status' => 'pending',
-                'source' => 'shopee',
-                'date' => $dateLast,
-                'description' => '',
-            ]);
-
-            for ($i = 0; $i < count($productsName[1]); $i++) {
-                $name = trim(str_replace(array('"', "  "), "", str_replace("\\r\\n", '', json_encode($productsName[1][$i]))));
-                $quantity = json_encode($productsJumlah[1][$i]);
-                $price = str_replace('Rp ', '', str_replace(',', '', json_encode($productsHarga[1][$i])));
-
-                $quantity2 = filter_var($quantity, FILTER_SANITIZE_NUMBER_INT);
-                $price2 = filter_var($price, FILTER_SANITIZE_NUMBER_INT);
+                Log::info("Invoice Number: $invoiceNumber");
                 
-                Log::info("Product Name: " . $name);
-                Log::info("Product Jumlah: " . $quantity2);
-                Log::info("Product Harga: " . $price2);
+                Log::info("Date: $date[1]");
 
+                $datePatternCheck = '/^\d{2} (Jan|Feb|Mar|Apr|Mei|Jun|Jul|Ags|Sep|Okt|Nov|Des) \d{4}$/';
 
-                Sale::create([
-                    'transaction_id' => $transaction->id,
-                    'amount' => $quantity2 * $price2,
-                    'description' => $quantity2 . 'X ' . $name,
+                // Log::info("Product Name: " . str_replace("\r", "", $productsName[1]));
+
+                $dateString = $date[1];
+                if (preg_match($datePatternCheck, $date[1])) {
+                    foreach ($monthNames as $indonesianMonth => $englishMonth) {
+                        $dateString = str_replace($indonesianMonth, $englishMonth, $date[1]);
+                    }
+                    $dateObj = DateTime::createFromFormat('d M Y', $dateString);
+                    if ($dateObj !== false) {
+                        $dateLast = $dateObj->format('Y-m-d H:i:s');
+                    } else {
+                        $dateLast = now();
+                    }
+                }else{
+                    $dateLast = Carbon::createFromFormat('d/m/Y', $date[1])->format('Y-m-d');
+                }
+
+                $transaction = Transaction::create([
+                    'unique_code' => $invoice[0],
+                    'status' => 'pending',
+                    'source' => 'shopee',
                     'date' => $dateLast,
+                    'description' => '',
                 ]);
 
-                $transaction->update([
-                    'description' => $transaction->description . ' ' . $quantity2 . 'X ' . $name,
-                ]);
+                for ($i = 0; $i < count($productsName[1]); $i++) {
+                    $name = trim(str_replace(array('"', "  "), "", str_replace("\\r\\n", '', json_encode($productsName[1][$i]))));
+                    $quantity = json_encode($productsJumlah[1][$i]);
+                    $price = str_replace('Rp ', '', str_replace(',', '', json_encode($productsHarga[1][$i])));
+
+                    $quantity2 = filter_var($quantity, FILTER_SANITIZE_NUMBER_INT);
+                    $price2 = filter_var($price, FILTER_SANITIZE_NUMBER_INT);
+                    
+                    Log::info("Product Name: " . $name);
+                    Log::info("Product Jumlah: " . $quantity2);
+                    Log::info("Product Harga: " . $price2);
+
+
+                    Sale::create([
+                        'transaction_id' => $transaction->id,
+                        'amount' => $quantity2 * $price2,
+                        'description' => $quantity2 . 'X ' . $name,
+                        'date' => $dateLast,
+                    ]);
+
+                    $transaction->update([
+                        'description' => $transaction->description . ' ' . $quantity2 . 'X ' . $name,
+                    ]);
+                }
             }
             // Log::info("Product Harga: " . str_replace('Rp ', '', str_replace(',', '', $productsHarga[1])));
         }

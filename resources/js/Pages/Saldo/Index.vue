@@ -241,7 +241,7 @@ const select = () => {
                                     {{ ++index }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
-                                    Rp{{ saldo.amount.toLocaleString() }}
+                                    Rp{{ parseInt(saldo.amount).toLocaleString() }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     <p :class="saldo.type == 'masuk' ? 'text-green-600' : 'text-red-600'">
