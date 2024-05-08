@@ -16,7 +16,7 @@ class FetchEmailService
     public function fetchTokped()
     {
         $mailbox = new Mailbox(
-            '{imap.gmail.com:993/imap/ssl}INBOX',
+            '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX',
             'seratusart@gmail.com',
             'zzqt ocry gjzc ugty',
             public_path('attachments')
@@ -119,7 +119,7 @@ class FetchEmailService
 
     public function fetchEtsy(){
         $mailbox = new Mailbox(
-            '{imap.gmail.com:993/imap/ssl}INBOX',
+            '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX',
             'seratusart@gmail.com',
             'zzqt ocry gjzc ugty',
             public_path('attachments')
@@ -241,7 +241,7 @@ class FetchEmailService
 
     public function fetchShopee(){
         $mailbox = new Mailbox(
-            '{imap.gmail.com:993/imap/ssl}INBOX',
+            '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX',
             'seratusart@gmail.com',
             'zzqt ocry gjzc ugty',
             public_path('attachments')

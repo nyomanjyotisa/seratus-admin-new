@@ -81,8 +81,9 @@ Route::get('/setLang/{locale}', function ($locale) {
     return back();
 })->name('setlang');
 
+Route::get('/transaction/fetch-email', [TransactionController::class, 'fetchEmail'])->name('transaction.fetch-email');
+
 Route::middleware('auth', 'verified')->group(function () {
-    Route::get('/transaction/fetch-email', [TransactionController::class, 'fetchEmail'])->name('transaction.fetch-email');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
