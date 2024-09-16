@@ -61,7 +61,7 @@ watch(
     () => _.cloneDeep(data.params),
     debounce(() => {
         let params = pickBy(data.params);
-        router.get(route("saldo.index"), params, {
+        router.get(route("kas.index"), params, {
             replace: true,
             preserveState: true,
             preserveScroll: true,

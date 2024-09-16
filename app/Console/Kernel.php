@@ -16,6 +16,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('fetch-email:tokped')->everyMinute();
+        $schedule->command('fetch-email:shopee')->everyMinute();
+        $schedule->command('fetch-email:etsy')->everyMinute();
     }
 
     /**

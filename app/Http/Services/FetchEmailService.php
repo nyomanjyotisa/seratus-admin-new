@@ -72,7 +72,7 @@ class FetchEmailService
 
             $findTransaction = Transaction::where('unique_code', $invoice[0])->get();
 
-            if($findTransaction){
+            if($findTransaction->count() > 0){
                 Log::info('Already Exist: ' . $invoice[0]);
             }else{
                 $dateString = $date[1];
@@ -180,7 +180,7 @@ class FetchEmailService
 
             $findTransaction = Transaction::where('unique_code', $orderNumber[1])->get();
 
-            if($findTransaction){
+            if($findTransaction->count() > 0){
                 Log::info('Already Exist: ' . $orderNumber[1]);
             }else{
                 Log::info($orderNumber[1]);
@@ -317,7 +317,7 @@ class FetchEmailService
 
             $findTransaction = Transaction::where('unique_code', $invoiceNumber)->get();
 
-            if($findTransaction){
+            if($findTransaction->count() > 0){
                 Log::info('Already Exist: ' . $invoiceNumber);
             }else{
 
