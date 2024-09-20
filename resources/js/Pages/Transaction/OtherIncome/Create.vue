@@ -7,7 +7,7 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import SelectInput from "@/Components/SelectInput.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { useForm } from "@inertiajs/vue3";
-import { watchEffect } from "vue";
+import { watchEffect, ref } from "vue";
 
 const props = defineProps({
     show: Boolean,
@@ -25,6 +25,7 @@ const form = useForm({
 });
 
 const create = () => {
+    form.amount = unformatNumber(form.amount);
     form.post(route("other-income.store"), {
         preserveScroll: true,
         onSuccess: () => {
@@ -42,6 +43,21 @@ watchEffect(() => {
     }
 });
 
+const formatNumber = (value) => {
+    if (!value) return "";
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+const unformatNumber = (value) => {
+    if (!value) return "";
+    return value.replace(/,/g, "");
+};
+
+const amountDisplay = ref("");
+
+watchEffect(() => {
+    amountDisplay.value = formatNumber(form.amount);
+});
 </script>
 
 <template>
@@ -59,10 +75,11 @@ watchEffect(() => {
                         <InputLabel for="amount" value="Amount" />
                         <TextInput
                             id="amount"
-                            type="number"
+                            type="text"
                             class="mt-1 block w-full"
-                            v-model="form.amount"
-                            placeholder="ex: 100000"
+                            v-model="amountDisplay"
+                            @input="form.amount = unformatNumber($event.target.value)"
+                            placeholder="ex: 100,000"
                             :error="form.errors.amount"
                         />
                         <InputError class="mt-2" :message="form.errors.amount" />
@@ -88,7 +105,6 @@ watchEffect(() => {
                             type="date"
                             class="mt-1 block w-full"
                             v-model="form.date"
-                            placeholder="ex: Pandil Rama Sita 50 cm"
                             :error="form.errors.date"
                         />
                         <InputError class="mt-2" :message="form.errors.date" />

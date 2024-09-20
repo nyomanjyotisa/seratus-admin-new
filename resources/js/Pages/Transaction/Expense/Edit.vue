@@ -25,6 +25,7 @@ const form = useForm({
 });
 
 const update = () => {
+    form.amount = unformatNumber(form.amount);
     form.put(route("expense.update", props.expense?.id), {
         preserveScroll: true,
         onSuccess: () => {
@@ -49,6 +50,21 @@ watchEffect(() => {
     }
 });
 
+const formatNumber = (value) => {
+    if (!value) return "";
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+const unformatNumber = (value) => {
+    if (!value || typeof value !== 'string') return value;
+    return value.replace(/,/g, "");
+};
+
+const amountDisplay = ref("");
+
+watchEffect(() => {
+    amountDisplay.value = formatNumber(form.amount);
+});
 </script>
 
 <template>
@@ -66,10 +82,11 @@ watchEffect(() => {
                         <InputLabel for="amount" value="Amount" />
                         <TextInput
                             id="amount"
-                            type="number"
+                            type="text"
                             class="mt-1 block w-full"
-                            v-model="form.amount"
-                            placeholder="ex: 100000"
+                            v-model="amountDisplay"
+                            @input="form.amount = unformatNumber($event.target.value)"
+                            placeholder="ex: 100,000"
                             :error="form.errors.amount"
                         />
                         <InputError class="mt-2" :message="form.errors.amount" />
@@ -95,7 +112,6 @@ watchEffect(() => {
                             type="date"
                             class="mt-1 block w-full"
                             v-model="form.date"
-                            placeholder="ex: Pandil Rama Sita 50 cm"
                             :error="form.errors.date"
                         />
                         <InputError class="mt-2" :message="form.errors.date" />

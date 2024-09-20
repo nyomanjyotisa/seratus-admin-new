@@ -38,6 +38,7 @@ const form = useForm({
 });
 
 const create = () => {
+    form.amount = unformatNumber(form.amount);
     form.post(route("sale.store"), {
         preserveScroll: true,
         onSuccess: () => {
@@ -97,6 +98,21 @@ const payment_types = [
     }
 ]
 
+const formatNumber = (value) => {
+    if (!value) return "";
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+const unformatNumber = (value) => {
+    if (!value) return "";
+    return value.replace(/,/g, "");
+};
+
+const amountDisplay = ref("");
+
+watchEffect(() => {
+    amountDisplay.value = formatNumber(form.amount);
+});
 </script>
 
 <template>
@@ -140,10 +156,11 @@ const payment_types = [
                         <InputLabel for="amount" value="Amount" />
                         <TextInput
                             id="amount"
-                            type="number"
+                            type="text"
                             class="mt-1 block w-full"
-                            v-model="form.amount"
-                            placeholder="ex: 100000"
+                            v-model="amountDisplay"
+                            @input="form.amount = unformatNumber($event.target.value)"
+                            placeholder="ex: 100,000"
                             :error="form.errors.amount"
                         />
                         <InputError class="mt-2" :message="form.errors.amount" />
@@ -156,7 +173,7 @@ const payment_types = [
                             type="number"
                             class="mt-1 block w-full"
                             v-model="form.price"
-                            placeholder="ex: 200000"
+                            placeholder="ex: 200,000"
                             :error="form.errors.price"
                         />
                         <InputError class="mt-2" :message="form.errors.price" />
@@ -182,7 +199,6 @@ const payment_types = [
                             type="date"
                             class="mt-1 block w-full"
                             v-model="form.date"
-                            placeholder="ex: Pandil Rama Sita 50 cm"
                             :error="form.errors.date"
                         />
                         <InputError class="mt-2" :message="form.errors.date" />
