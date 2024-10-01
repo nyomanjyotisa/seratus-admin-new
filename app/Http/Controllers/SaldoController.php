@@ -74,6 +74,28 @@ class SaldoController extends Controller
         }
     }
 
+    public function tambahKas(Request $request, $type)
+    {
+        DB::beginTransaction();
+        try {
+            $laba = $request->input('laba');
+            $description = $request->input('description');
+
+            $saldoKas = Saldo::create([
+                'amount' => $laba,
+                'type' => $type,
+                'description' => $description,
+                'date' => now(),
+            ]);
+
+            DB::commit();
+            return back()->with('success',  $description . ' berhasil ditambahkan ke kas.');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return back()->with('error', 'Gagal menambahkan ' . $type . ' ke kas: ' . $th->getMessage());
+        }
+    }
+
     /**
      * Display the specified resource.
      *

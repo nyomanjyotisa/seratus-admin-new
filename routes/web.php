@@ -100,6 +100,7 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::resource('/expense', ExpenseController::class)->except('create', 'edit');
     Route::resource('/other-income', OtherIncomeController::class)->except('create', 'edit');
     Route::resource('/kas', SaldoController::class)->except('create', 'edit');
+    Route::post('/kas/tambah-kas/{type}', [SaldoController::class, 'tambahKas'])->name('kas.tambahKas');
 
     Route::resource('/role', RoleController::class)->except('create', 'show', 'edit');
     Route::post('/role/destroy-bulk', [RoleController::class, 'destroyBulk'])->name('role.destroy-bulk');

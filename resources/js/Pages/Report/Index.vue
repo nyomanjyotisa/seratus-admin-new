@@ -6,7 +6,7 @@ import TextInput from "@/Components/TextInput.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InfoButton from "@/Components/InfoButton.vue";
 import SelectInput from "@/Components/SelectInput.vue";
-import { reactive, watch } from "vue";
+import { reactive, watch, onMounted } from "vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import pkg from "lodash";
 import { router } from "@inertiajs/vue3";
@@ -40,6 +40,10 @@ const props = defineProps({
     total_pemasukan: Number,
     total_pengeluaran: Number,
     laba: Number,
+    disabled: {
+        type: Boolean,
+        default: false,
+    },
 });
 const data = reactive({
     params: {
@@ -56,6 +60,8 @@ const data = reactive({
     deleteBulkOpen: false,
     transaction: null,
     dataSet: usePage().props.app.perpage,
+    labaButtonClicked: false,
+    bagiHasilButtonDisabled: true,  // Initially disabled until Laba is added
 });
 
 const downloadReport = () => {
@@ -174,6 +180,76 @@ const months = [
     }
 ]
 
+const getMonthName = (monthNumber) => {
+    const month = months.find(m => m.value === monthNumber);
+    return month ? month.label : '';
+};
+
+// Load button states from localStorage (or backend)
+const loadButtonStates = () => {
+    const labaState = localStorage.getItem(`laba-${props.year}-${props.month}`);
+    if (labaState === 'clicked') {
+        data.labaButtonClicked = true;
+        data.bagiHasilButtonDisabled = false;
+    }
+
+    const bagiHasilState = localStorage.getItem(`bagiHasil-${props.year}-${props.month}`);
+    if (bagiHasilState === 'clicked') {
+        data.bagiHasilButtonDisabled = true;  // Disable after clicked
+    }
+};
+
+// Run this on component mount to load the previous states
+onMounted(() => {
+    loadButtonStates();
+});
+
+const formLaba = useForm({
+    laba: props.laba,
+    type: 'masuk',
+    description: `Laba ${getMonthName(props.month)} ${props.year}`,
+    date: '',
+});
+
+const formBagiHasil = useForm({
+    laba: Math.ceil((props.laba * 2 / 3) / 100000) * 100000,
+    type: 'keluar',
+    description: `Bagi Hasil ${getMonthName(props.month)} ${props.year}`,
+    date: '',
+});
+
+// Function to handle adding profit to Kas
+const addProfitToKas = () => {
+    formLaba.post(route("kas.tambahKas", { type: 'masuk' }), {
+        onSuccess: () => {
+            data.labaButtonClicked = true;
+            data.bagiHasilButtonDisabled = false;  // Enable Bagi Hasil button
+
+            // Save the state in localStorage
+            localStorage.setItem(`laba-${props.year}-${props.month}`, 'clicked');
+            console.log('Laba berhasil ditambahkan ke kas');
+        },
+        onError: () => {
+            console.error('Error menambahkan laba ke kas');
+        },
+    });
+};
+
+// Function to handle Bagi Hasil
+const addBagiHasil = () => {
+    formBagiHasil.post(route("kas.tambahKas", { type: 'keluar' }), {
+        onSuccess: () => {
+            data.bagiHasilButtonDisabled = true;  // Disable after clicking
+
+            // Save the state in localStorage
+            localStorage.setItem(`bagiHasil-${props.year}-${props.month}`, 'clicked');
+            console.log('Bagi hasil berhasil ditambahkan ke kas');
+        },
+        onError: () => {
+            console.error('Error menambahkan bagi hasil ke kas');
+        },
+    });
+};
 </script>
 
 <template>
@@ -293,6 +369,13 @@ const months = [
                     </tr>
                 </tbody>
             </table>
+            <PrimaryButton :disabled="data.labaButtonClicked" @click="addProfitToKas">
+                Tambahkan Laba ke Kas
+            </PrimaryButton>
+            <br>
+            <PrimaryButton :disabled="data.bagiHasilButtonDisabled" @click="addBagiHasil">
+                Proses Bagi Hasil
+            </PrimaryButton>
             <h2 class="text-lg font-medium text-slate-900 dark:text-slate-100">
                 Transaksi
             </h2>
