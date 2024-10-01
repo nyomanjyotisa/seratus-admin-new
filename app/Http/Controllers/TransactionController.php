@@ -299,7 +299,7 @@ class TransactionController extends Controller
 
         // Calculate totals
         $total_pemasukan = $transactions->sum('sales_total') + $otherIncomes->sum('amount');
-        $total_pengeluaran = $expenses->sum('amount');
+        $total_pengeluaran = $transactions->sum('expenses_total')+ $transactions->sum('productions_total') + $expenses->sum('amount');
         $laba = $total_pemasukan - $total_pengeluaran;
 
         // Load the PDF view with the data
@@ -313,7 +313,7 @@ class TransactionController extends Controller
             'year' => $year,
             'month' => $month,
         ]);
-
+        $pdf->setPaper('A4', 'landscape');
         // Download the PDF
         return $pdf->download('report_' . $year . '_' . $month . '.pdf');
     }

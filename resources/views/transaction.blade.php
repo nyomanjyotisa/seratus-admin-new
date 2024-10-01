@@ -38,22 +38,36 @@
     <table>
         <thead>
             <tr>
-                <!-- <th>Unique Code</th> -->
+                <th>#</th>
+                <th>Unique Code</th>
                 <th>Deskripsi</th>
+                <th>Status</th>
+                <th>Laba</th>
+                <th>Sumber</th>
                 <th>Tanggal</th>
-                <th>Jumlah</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($transactions as $transaction)
                 <tr>
-                    <!-- <td>{{ $transaction->unique_code ?: '-' }}</td> -->
+                    <td>{{ $loop->iteration }}</td> 
+                    <td>{{ $transaction->unique_code ?: '-' }}</td>
                     <td>{{ $transaction->description }}</td>
+                    <td>
+                        Penjualan - Rp{{ number_format($transaction->sales_total, 0, ',', ',') }}<br>
+                        Produksi - Rp{{ number_format($transaction->productions_total, 0, ',', ',') }}<br>
+                        Pengeluaran lain - Rp{{ number_format($transaction->expenses_total, 0, ',', ',') }}<br>
+                        Pemasukan lain - Rp{{ number_format($transaction->other_incomes_total, 0, ',', ',') }}
+                    </td>
+                    <td>
+                        Rp{{ number_format(($transaction->persentase_laba * $transaction->sales_total) / 100) }}<br>
+                        {{ $transaction->persentase_laba }}%
+                    </td>
+                    <td>{{ $transaction->source }}</td>
                     <td>{{ $transaction->date }}</td>
-                    <td>Rp{{ number_format($transaction->sales_total, 0, ',', '.') }}</td>
                 </tr>
                 <tr class="nested">
-                    <td colspan="3">
+                    <td colspan="7">
                         <strong>Detail Transaksi:</strong>
                         <ul>
                             <li>Data Transaksi Penjualan:
