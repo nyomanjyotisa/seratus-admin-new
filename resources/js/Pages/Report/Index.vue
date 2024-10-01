@@ -58,6 +58,12 @@ const data = reactive({
     dataSet: usePage().props.app.perpage,
 });
 
+const downloadReport = () => {
+    const year = props.year;
+    const month = props.month;
+    window.open(`/report/${year}/${month}/download`, '_blank');
+};
+
 const form = useForm({
     year: props.year,
     month: props.month,
@@ -214,6 +220,9 @@ const months = [
                             Download Laporan
                         </PrimaryButton>
                     </Link> -->
+                    <div class="my-4">
+                        <PrimaryButton @click="downloadReport">Download Report as PDF</PrimaryButton>
+                    </div>
                     <Create
                         :show="data.createOpen"
                         @close="data.createOpen = false"

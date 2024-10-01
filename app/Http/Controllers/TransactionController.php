@@ -11,7 +11,7 @@ use App\Models\OtherIncome;
 use App\Models\Role;
 use App\Models\Sale;
 use App\Models\Transaction;
-use Barryvdh\DomPDF\PDF;
+use PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -275,4 +275,47 @@ class TransactionController extends Controller
         $this->fetchEmailService->fetchEtsy();
         $this->fetchEmailService->fetchShopee();
     }
+
+    public function downloadReport(Request $request, $year, $month){
+        $date = Carbon::createFromFormat('Y-m-d', $year . '-' . $month . '-15');
+
+        // Get transactions for the specified month and year
+        $transactions = Transaction::whereMonth('closed_at', $date->month)
+                                    ->whereYear('closed_at', $date->year)
+                                    ->with(['sales', 'otherIncomes', 'expenses', 'productions']) // Eager load sales, otherIncomes, and expenses
+                                    ->get();
+
+        // Get expenses for the specified month and year
+        $expenses = Expense::where('transaction_id', '=', NULL)
+                            ->whereMonth('date', $date->month)
+                            ->whereYear('date', $date->year)
+                            ->get();
+
+        // Get other incomes for the specified month and year
+        $otherIncomes = OtherIncome::where('transaction_id', '=', NULL)
+                                    ->whereMonth('date', $date->month)
+                                    ->whereYear('date', $date->year)
+                                    ->get();
+
+        // Calculate totals
+        $total_pemasukan = $transactions->sum('sales_total') + $otherIncomes->sum('amount');
+        $total_pengeluaran = $expenses->sum('amount');
+        $laba = $total_pemasukan - $total_pengeluaran;
+
+        // Load the PDF view with the data
+        $pdf = PDF::loadView('transaction', [
+            'transactions' => $transactions,
+            'expenses' => $expenses,
+            'otherIncomes' => $otherIncomes,
+            'total_pemasukan' => $total_pemasukan,
+            'total_pengeluaran' => $total_pengeluaran,
+            'laba' => $laba,
+            'year' => $year,
+            'month' => $month,
+        ]);
+
+        // Download the PDF
+        return $pdf->download('report_' . $year . '_' . $month . '.pdf');
+    }
+
 }
