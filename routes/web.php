@@ -10,6 +10,7 @@ use App\Http\Controllers\SaldoController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PriceCalculatorController;
 use App\Models\Expense;
 use App\Models\OtherIncome;
 use App\Models\Permission;
@@ -110,6 +111,8 @@ Route::middleware('auth', 'verified')->group(function () {
  
     Route::get('/report/{year}/{month}', [TransactionController::class, 'report'])->name('report');
     Route::get('/report/{year}/{month}/download', [TransactionController::class, 'downloadReport'])->name('report.download');
+
+    Route::get('/calculator', [PriceCalculatorController::class, 'index'])->name('calculator.index');
 });
 
 require __DIR__.'/auth.php';
