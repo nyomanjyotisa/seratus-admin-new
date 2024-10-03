@@ -95,10 +95,10 @@ const calculatePrices = () => {
   }
 
   //  Local Price
-  localPrice.value = Math.ceil(prodCost / (1 - (0.33 + 0.1)) / 10000) * 10000;
+  localPrice.value = Math.ceil((prodCost + anotherCostVal) / (1 - (0.33 + 0.1)) / 10000) * 10000;
 
   //  Aboard Price
-  const totalCost = prodCost + shipToCustomerVal + anotherCostVal;
+  const totalCost = prodCost + shipToCustomerVal + shipToKurasi + anotherCostVal;
   aboardPrice.value = Math.ceil((totalCost * 2.5 - shipToCustomerVal) / 10000) * 10000;
 };
 

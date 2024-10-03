@@ -2,8 +2,6 @@
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
-import { router } from '@inertiajs/vue3';
-import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 const props = defineProps({
     transaksiPending: Number,
@@ -94,9 +92,6 @@ const props = defineProps({
                             </p>
                         </div>
                     </div>
-                </div>
-                <div class="my-4">
-                    <PrimaryButton @click="router.get('/calculator')">Kalkulator Harga Produk</PrimaryButton>
                 </div>
             </div>
         </div>

@@ -40,7 +40,8 @@ class TransactionController extends Controller
         if ($request->has('search')) {
             $transactions->where(function($query) use ($request) {
                 $query->where('unique_code', 'LIKE', "%" . $request->search . "%")
-                      ->orWhere('description', 'LIKE', "%" . $request->search . "%");
+                      ->orWhere('description', 'LIKE', "%" . $request->search . "%")
+                      ->orWhere('source', 'LIKE', "%" . $request->search . "%");
             });
         }
         if ($request->has(['field', 'order'])) {
@@ -73,7 +74,8 @@ class TransactionController extends Controller
         if ($request->has('search')) {
             $transactions->where(function($query) use ($request) {
                 $query->where('unique_code', 'LIKE', "%" . $request->search . "%")
-                      ->orWhere('description', 'LIKE', "%" . $request->search . "%");
+                      ->orWhere('description', 'LIKE', "%" . $request->search . "%")
+                      ->orWhere('source', 'LIKE', "%" . $request->search . "%");
             });
         }
         if ($request->has(['field', 'order'])) {
