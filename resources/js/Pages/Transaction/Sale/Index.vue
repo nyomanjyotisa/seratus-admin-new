@@ -30,6 +30,15 @@ const data = reactive({
     sale: null,
 });
 
+const formatCurrency = (value) => {
+  const formattedValue = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0,
+  }).format(value);
+  
+  return formattedValue.replace(/\./g, ',');
+};
 </script>
 
 <template>
@@ -156,7 +165,7 @@ const data = reactive({
                                     {{ sale.payment_type ?? '-' }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
-                                    Rp{{ sale.amount.toLocaleString() }}
+                                    {{ formatCurrency(sale.amount) }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     <p style="white-space: normal; word-break: break-all; display: block;">{{ sale.description ?? '-' }}</p>
