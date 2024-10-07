@@ -27,22 +27,23 @@ const lebar = ref(props.initialWidth);
 const tinggi = ref(props.initialHeight);
 
 const formatCurrency = (value) => {
-  return new Intl.NumberFormat('id-ID', {
+  const formattedValue = new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
     maximumFractionDigits: 0,
   }).format(value);
+  
+  return formattedValue.replace(/\./g, ',');
 };
 
 const formatNumberWithCommas = (value) => {
   if (!value && value !== 0) return '';
-  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 const parseNumber = (value) => {
   if (typeof value === 'string') {
-    // Remove commas and replace period for float conversion
-    return parseFloat(value.replace(/\./g, '').replace(',', '.')) || 0;
+    return parseFloat(value.replace(/,/g, '')) || 0;
   }
   return typeof value === 'number' ? value : 0;
 };
