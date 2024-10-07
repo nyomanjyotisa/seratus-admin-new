@@ -15,14 +15,12 @@
             width: 100%;
             border-collapse: collapse;
         }
-        td {
+        td, th {
             border: 1px solid #000000;
             padding: 8px;
             text-align: left;
         }
         th {
-            border: 1px solid #000000;
-            padding: 8px;
             text-align: center;
         }
     </style>
@@ -48,7 +46,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($transactions as $transaction)
+            @forelse ($transactions as $transaction)
                 <tr>
                     <td>{{ $loop->iteration }}</td> 
                     <td>{{ $transaction->unique_code ?: '-' }}</td>
@@ -104,7 +102,11 @@
                         </ul>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="7">Tidak ada data transaksi</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 
@@ -118,17 +120,21 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($expenses as $expense)
+            @forelse ($expenses as $expense)
             <tr>
                 <td>{{ $expense->description }}</td>
                 <td>{{ $expense->date }}</td>
                 <td>Rp{{ number_format($expense->amount, 0, ',', '.') }}</td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="3">Tidak ada data pengeluaran lainnya</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 
-    <h3>Pendapatan Lainnya </h3>
+    <h3>Pendapatan Lainnya</h3>
     <table>
         <thead>
             <tr>
@@ -138,13 +144,17 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($otherIncomes as $income)
+            @forelse ($otherIncomes as $income)
             <tr>
                 <td>{{ $income->description }}</td>
                 <td>{{ $income->date }}</td>
                 <td>Rp{{ number_format($income->amount, 0, ',', '.') }}</td>    
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="3">Tidak ada data pendapatan lainnya</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </body>
