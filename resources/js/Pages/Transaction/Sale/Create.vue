@@ -38,7 +38,15 @@ const form = useForm({
 });
 
 const create = () => {
-    form.amount = unformatNumber(form.amount);
+    if (isNaN(Number(form.amount))) {
+        form.amount = "";
+    }
+    if (isNaN(Number(form.price))) {
+        form.price = "";
+    }
+
+    form.amount = unformatNumber(amountDisplay.value);
+    form.price = unformatNumber(priceDisplay.value);
     form.post(route("sale.store"), {
         preserveScroll: true,
         onSuccess: () => {
@@ -105,13 +113,29 @@ const formatNumber = (value) => {
 
 const unformatNumber = (value) => {
     if (!value) return "";
-    return value.replace(/,/g, "");
+    return value.replace(/\./g, '').replace(/,/g, '');
 };
 
 const amountDisplay = ref("");
+const priceDisplay = ref("");
+
+const handleInput = (event) => {
+    let input = event.target.value;
+    input = input.replace(/[^\d,\.]/g, '');
+    form.amount = unformatNumber(input);
+    amountDisplay.value = formatNumber(form.amount);
+};
+
+const handlePriceInput = (event) => {
+    let input = event.target.value;
+    input = input.replace(/[^\d,\.]/g, '');
+    form.price = unformatNumber(input);
+    priceDisplay.value = formatNumber(form.price);
+};
 
 watchEffect(() => {
     amountDisplay.value = formatNumber(form.amount);
+    priceDisplay.value = formatNumber(form.price);
 });
 </script>
 
@@ -159,7 +183,7 @@ watchEffect(() => {
                             type="text"
                             class="mt-1 block w-full"
                             v-model="amountDisplay"
-                            @input="form.amount = unformatNumber($event.target.value)"
+                            @input="handleInput"
                             placeholder="ex: 100,000"
                             :error="form.errors.amount"
                         />
@@ -170,9 +194,10 @@ watchEffect(() => {
                         <InputLabel for="price" value="Full Price" />
                         <TextInput
                             id="price"
-                            type="number"
+                            type="text"
                             class="mt-1 block w-full"
-                            v-model="form.price"
+                            v-model="priceDisplay"
+                            @input="handlePriceInput"
                             placeholder="ex: 200,000"
                             :error="form.errors.price"
                         />

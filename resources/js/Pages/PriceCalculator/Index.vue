@@ -1,30 +1,23 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 
-const props = defineProps({
-  initialProductionCost: { type: Number },
-  initialShippingToKurasi: { type: Number },
-  initialShippingToCustomer: { type: Number },
-  initialAnotherCost: { type: Number },
-  initialLength: { type: Number },
-  initialWidth: { type: Number },
-  initialHeight: { type: Number },
-});
-
-const productionCost = ref(props.initialProductionCost);
-const shippingToKurasi = ref(props.initialShippingToKurasi);
-const shippingToCustomer = ref(props.initialShippingToCustomer);
-const anotherCost = ref(props.initialAnotherCost);
 const localPrice = ref(0);
 const aboardPrice = ref(0);
 
-const panjang = ref(props.initialLength);
-const lebar = ref(props.initialWidth);
-const tinggi = ref(props.initialHeight);
+const panjang = ref('');
+const lebar = ref('');
+const tinggi = ref('');
+
+const form = ref({
+  productionCost: (''),
+  shippingToKurasi: (''),
+  shippingToCustomer: (''),
+  anotherCost: (''),
+});
 
 const formatCurrency = (value) => {
   const formattedValue = new Intl.NumberFormat('id-ID', {
@@ -36,9 +29,14 @@ const formatCurrency = (value) => {
   return formattedValue.replace(/\./g, ',');
 };
 
-const formatNumberWithCommas = (value) => {
-  if (!value && value !== 0) return '';
+const formatNumber = (value) => {
+  if (!value) return "";
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+const unformatNumber = (value) => {
+  if (!value) return "";
+  return value.replace(/[^0-9]/g, ''); 
 };
 
 const parseNumber = (value) => {
@@ -48,58 +46,22 @@ const parseNumber = (value) => {
   return typeof value === 'number' ? value : 0;
 };
 
-const formattedProductionCost = computed({
-  get() {
-    return formatNumberWithCommas(productionCost.value);
-  },
-  set(value) {
-    productionCost.value = parseNumber(value);
-  }
-});
-
-const formattedShippingToKurasi = computed({
-  get() {
-    return formatNumberWithCommas(shippingToKurasi.value);
-  },
-  set(value) {
-    shippingToKurasi.value = parseNumber(value);
-  }
-});
-
-const formattedShippingToCustomer = computed({
-  get() {
-    return formatNumberWithCommas(shippingToCustomer.value);
-  },
-  set(value) {
-    shippingToCustomer.value = parseNumber(value);
-  }
-});
-
-const formattedAnotherCost = computed({
-  get() {
-    return formatNumberWithCommas(anotherCost.value);
-  },
-  set(value) {
-    anotherCost.value = parseNumber(value);
-  }
-});
-
 const calculatePrices = () => {
-  const prodCost = parseNumber(formattedProductionCost.value);
-  const shipToKurasi = parseNumber(formattedShippingToKurasi.value);
-  const shipToCustomerVal = parseNumber(formattedShippingToCustomer.value);
-  const anotherCostVal = parseNumber(formattedAnotherCost.value);
+  const prodCost = parseNumber(form.value.productionCost);
+  const shipToKurasi = parseNumber(form.value.shippingToKurasi);
+  const shipToCustomerVal = parseNumber(form.value.shippingToCustomer);
+  const anotherCostVal = parseNumber(form.value.anotherCost);
 
-  if (isNaN(prodCost) || isNaN(shipToKurasi) || isNaN(shipToCustomerVal)) {
+  if (isNaN(prodCost) || isNaN(shipToKurasi) || isNaN(shipToCustomerVal) || isNaN(anotherCostVal)) {
     alert("Please enter valid numbers for production cost, shipping to Kurasi, and shipping to customer.");
     return;
   }
 
-  //  Local Price
+  // Local Price calculation
   localPrice.value = Math.ceil((prodCost + anotherCostVal) / (1 - (0.33 + 0.1)) / 10000) * 10000;
 
-  //  Aboard Price
-  const totalCost = prodCost + shipToCustomerVal + shipToKurasi + anotherCostVal;
+  // Aboard Price calculation
+  const totalCost = prodCost + shipToKurasi + shipToCustomerVal + anotherCostVal;
   aboardPrice.value = Math.ceil((totalCost * 2.5 - shipToCustomerVal) / 10000) * 10000;
 };
 
@@ -115,6 +77,28 @@ const volume = computed(() => {
 
   return calculatedVolume.toFixed(3);
 });
+
+const handleInput = (field) => (event) => {
+  let input = event.target.value.replace(/[^\d,\.]/g, '');
+  form.value[field] = unformatNumber(input);
+};
+
+const handleProdInput = handleInput('productionCost');
+const handleShipKurasiInput = handleInput('shippingToKurasi');
+const handleShiptoCustomerInput = handleInput('shippingToCustomer');
+const handleAnotherCostInput = handleInput('anotherCost');
+
+const productionCostDisplay = ref("");
+const shippingToKurasiDisplay = ref('');
+const shippingToCustomerDisplay = ref('');
+const anotherCostDisplay = ref('');
+
+watchEffect(() => {
+  productionCostDisplay.value = formatNumber(form.value.productionCost);
+  shippingToKurasiDisplay.value = formatNumber(form.value.shippingToKurasi);
+  shippingToCustomerDisplay.value = formatNumber(form.value.shippingToCustomer);
+  anotherCostDisplay.value = formatNumber(form.value.anotherCost);
+});
 </script>
 
 <template>
@@ -127,36 +111,40 @@ const volume = computed(() => {
                     <div class="input-group">
                         <label for="productionCost" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Harga Produksi</label>
                         <input type="text" 
-                               v-model="formattedProductionCost" 
+                               v-model="productionCostDisplay" 
                                id="productionCost" 
                                class="mt-1 w-full text-left p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600" 
+                               @input="handleProdInput"
                                placeholder="Masukkan harga produksi" />
                     </div>
 
                     <div class="input-group">
                         <label for="shippingToKurasi" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ongkir to Kurasi</label>
                         <input type="text" 
-                               v-model="formattedShippingToKurasi" 
+                               v-model="shippingToKurasiDisplay" 
                                id="shippingToKurasi" 
                                class="mt-1 w-full text-left p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600" 
+                               @input="handleShipKurasiInput"
                                placeholder="Isi jika ingin kalkulasi produk untuk dijual di luar negeri" />
                     </div>
 
                     <div class="input-group">
                         <label for="shippingToCustomer" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ongkir Kurasi to Customer (US)</label>
                         <input type="text" 
-                               v-model="formattedShippingToCustomer" 
+                               v-model="shippingToCustomerDisplay" 
                                id="shippingToCustomer" 
                                class="mt-1 w-full text-left p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600" 
+                               @input="handleShiptoCustomerInput"
                                placeholder="Isi jika ingin kalkulasi produk untuk dijual di luar negeri" />
                     </div>
 
                     <div class="input-group">
                         <label for="anotherCost" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Biaya lainnya (Opsional)</label>
                         <input type="text" 
-                               v-model="formattedAnotherCost" 
+                               v-model="anotherCostDisplay" 
                                id="anotherCost" 
                                class="mt-1 w-full text-left p-2 border rounded-md dark:bg-slate-900 dark:border-slate-600" 
+                               @input="handleAnotherCostInput"
                                placeholder="Masukkan biaya lainnya (Opsional)" />
                     </div>
 

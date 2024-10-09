@@ -26,7 +26,11 @@ const form = useForm({
 });
 
 const update = () => {
-    form.amount = unformatNumber(form.amount);
+    if (isNaN(Number(form.amount))) {
+        form.amount = "";
+    }
+
+    form.amount = unformatNumber(amountDisplay.value);
     form.put(route("production.update", props.production?.id), {
         preserveScroll: true,
         onSuccess: () => {
@@ -57,11 +61,18 @@ const formatNumber = (value) => {
 };
 
 const unformatNumber = (value) => {
-    if (!value || typeof value !== 'string') return value;
-    return value.replace(/,/g, "");
+    if (!value) return "";
+    return value.replace(/\./g, '').replace(/,/g, '');
 };
 
 const amountDisplay = ref("");
+
+const handleInput = (event) => {
+    let input = event.target.value;
+    input = input.replace(/[^\d,\.]/g, '');
+    form.amount = unformatNumber(input);
+    amountDisplay.value = formatNumber(form.amount);
+};
 
 watchEffect(() => {
     amountDisplay.value = formatNumber(form.amount);
@@ -86,7 +97,7 @@ watchEffect(() => {
                             type="text"
                             class="mt-1 block w-full"
                             v-model="amountDisplay"
-                            @input="form.amount = unformatNumber($event.target.value)"
+                            @input="handleInput"
                             placeholder="ex: 100,000"
                             :error="form.errors.amount"
                         />
