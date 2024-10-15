@@ -106,16 +106,21 @@ watchEffect(() => {
 
                     <div>
                         <InputLabel for="amount" value="Amount" />
-                        <TextInput
-                            id="amount"
-                            type="text"
-                            class="mt-1 block w-full"
-                            v-model="amountDisplay"
-                            @input="handleInput"
-                            placeholder="ex: 100,000"
-                            :error="form.errors.amount"
-                        />
-                        <InputError class="mt-2" :message="form.errors.amount" />
+                        <div class="relative mt-1">
+                            <TextInput
+                                id="amount"
+                                type="text"
+                                class="mt-1 block w-full pl-8 pr-2"
+                                v-model="amountDisplay"
+                                @input="handleInput"
+                                placeholder="ex: 100,000"
+                                :error="form.errors.amount"
+                            />
+                            <InputError class="mt-2" :message="form.errors.amount" />
+                            <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
+                                Rp
+                            </span>
+                        </div>
                     </div>
 
                     <div>
