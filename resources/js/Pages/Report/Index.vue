@@ -6,7 +6,7 @@ import TextInput from "@/Components/TextInput.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InfoButton from "@/Components/InfoButton.vue";
 import SelectInput from "@/Components/SelectInput.vue";
-import { reactive, watch, onMounted } from "vue";
+import { reactive, watch, onMounted, computed } from "vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import pkg from "lodash";
 import { router } from "@inertiajs/vue3";
@@ -23,6 +23,7 @@ import DeleteBulk from "@/Pages/Transaction/DeleteBulk.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import { usePage } from "@inertiajs/vue3";
 import { Link, useForm } from "@inertiajs/vue3";
+import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 
 const { _, debounce, pickBy } = pkg;
 const props = defineProps({
@@ -62,7 +63,11 @@ const data = reactive({
     transaction: null,
     dataSet: usePage().props.app.perpage,
     labaButtonClicked: false,
-    bagiHasilButtonDisabled: true,  // Initially disabled until Laba is added
+    bagiHasilButtonDisabled: true,
+    showModal: false,
+    currentAction: null,
+    modalTitle: '',
+    modalMessage: '',
 });
 
 const downloadReport = () => {
@@ -127,6 +132,10 @@ const years = [
     {
         value : '2024',
         label: '2024'
+    },
+    {
+        value : '2025',
+        label: '2025'
     }
 ]
 
@@ -186,8 +195,20 @@ const getMonthName = (monthNumber) => {
     return month ? month.label : '';
 };
 
-// Load button states from localStorage (or backend)
+const isDateRestricted = computed(() => {
+    const currentYear = parseInt(props.year);
+    const currentMonth = parseInt(props.month);
+    return currentYear < 2024 || (currentYear === 2024 && currentMonth <= 5);
+});
+
+// Load button states from localStorage
 const loadButtonStates = () => {
+    if (isDateRestricted.value) {
+        data.labaButtonClicked = true;
+        data.bagiHasilButtonDisabled = true;
+        return;
+    }
+
     const labaState = localStorage.getItem(`laba-${props.year}-${props.month}`);
     if (labaState === 'clicked') {
         data.labaButtonClicked = true;
@@ -196,7 +217,7 @@ const loadButtonStates = () => {
 
     const bagiHasilState = localStorage.getItem(`bagiHasil-${props.year}-${props.month}`);
     if (bagiHasilState === 'clicked') {
-        data.bagiHasilButtonDisabled = true;  // Disable after clicked
+        data.bagiHasilButtonDisabled = true;
     }
 };
 
@@ -219,8 +240,35 @@ const formBagiHasil = useForm({
     date: '',
 });
 
-// Function to handle adding profit to Kas
+const showConfirmation = (action) => {
+    data.showModal = true;
+    data.currentAction = action;
+
+    if (action === 'addProfit') {
+        data.modalTitle = 'Konfirmasi Tambah Laba ke Kas';
+        data.modalMessage = 'Anda yakin ingin menambahkan laba ke kas?';
+    } else if (action === 'addBagiHasil') {
+        data.modalTitle = 'Konfirmasi Proses Bagi Hasil';
+        data.modalMessage = 'Anda yakin ingin memproses bagi hasil?';
+    }
+};
+
+const handleConfirm = () => {
+    data.showModal = false;
+    if (data.currentAction === 'addProfit') {
+        addProfitToKas();
+    } else if (data.currentAction === 'addBagiHasil') {
+        addBagiHasil();
+    }
+};
+
+const handleCancel = () => {
+    data.showModal = false;
+};
+
 const addProfitToKas = () => {
+    if (isDateRestricted.value || data.labaButtonClicked) return;
+
     formLaba.post(route("kas.tambahKas", { type: 'masuk' }), {
         onSuccess: () => {
             data.labaButtonClicked = true;
@@ -236,8 +284,9 @@ const addProfitToKas = () => {
     });
 };
 
-// Function to handle Bagi Hasil
 const addBagiHasil = () => {
+    if (isDateRestricted.value || data.bagiHasilButtonDisabled) return;
+
     formBagiHasil.post(route("kas.tambahKas", { type: 'keluar' }), {
         onSuccess: () => {
             data.bagiHasilButtonDisabled = true;  // Disable after clicking
@@ -384,13 +433,21 @@ const addBagiHasil = () => {
                     </tr>
                 </tbody>
             </table>
-            <PrimaryButton :disabled="data.labaButtonClicked" @click="addProfitToKas">
+            <PrimaryButton :disabled="data.labaButtonClicked || isDateRestricted" @click="showConfirmation('addProfit')">
                 Tambahkan Laba ke Kas
             </PrimaryButton>
             <br>
-            <PrimaryButton :disabled="data.bagiHasilButtonDisabled" @click="addBagiHasil">
+            <PrimaryButton :disabled="data.bagiHasilButtonDisabled || isDateRestricted" @click="showConfirmation('addBagiHasil')">
                 Proses Bagi Hasil
             </PrimaryButton>
+            <ConfirmationModal
+                v-if="data.showModal"
+                :show="data.showModal"
+                :title="data.modalTitle"
+                :message="data.modalMessage"
+                @confirm="handleConfirm"
+                @cancel="handleCancel"
+            />
             <h2 class="text-lg font-medium text-slate-900 dark:text-slate-100">
                 Transaksi
             </h2>
