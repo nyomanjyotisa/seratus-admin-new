@@ -254,6 +254,12 @@ class TransactionController extends Controller
 
         $laba = $total_pemasukan - $total_pengeluaran;
 
+        if ($total_pemasukan > 0) {
+            $persentase_laba_total = ($laba / $total_pemasukan) * 100;
+        } else {
+            $persentase_laba_total = 0;
+        }
+
         return Inertia::render('Report/Index', [
             'title'         => 'Laporan',
             'filters'       => $request->all(['search', 'field', 'order']),
@@ -269,6 +275,7 @@ class TransactionController extends Controller
             'total_pemasukan'         => $total_pemasukan,
             'total_pengeluaran'       => $total_pengeluaran,
             'laba'          => $laba,
+            'persentase_laba_total'          => $persentase_laba_total
         ]);
     }
 
@@ -304,6 +311,12 @@ class TransactionController extends Controller
         $total_pengeluaran = $transactions->sum('expenses_total')+ $transactions->sum('productions_total') + $expenses->sum('amount');
         $laba = $total_pemasukan - $total_pengeluaran;
 
+        if ($total_pemasukan > 0) {
+            $persentase_laba_total = ($laba / $total_pemasukan) * 100;
+        } else {
+            $persentase_laba_total = 0;
+        }
+
         // Load the PDF view with the data
         $pdf = PDF::loadView('transaction', [
             'transactions' => $transactions,
@@ -312,6 +325,7 @@ class TransactionController extends Controller
             'total_pemasukan' => $total_pemasukan,
             'total_pengeluaran' => $total_pengeluaran,
             'laba' => $laba,
+            'persentase_laba_total' => $persentase_laba_total,
             'year' => $year,
             'month' => $month,
         ]);

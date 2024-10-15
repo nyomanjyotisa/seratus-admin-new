@@ -28,9 +28,10 @@
 <body>
     <h1>Laporan Transaksi {{ $month }}/{{ $year }}</h1>
 
-    <p>Total Pemasukan: <strong>Rp{{ number_format($total_pemasukan, 0, ',', '.') }}</strong></p>
-    <p>Total Pengeluaran: <strong>Rp{{ number_format($total_pengeluaran, 0, ',', '.') }}</strong></p>
-    <p>Laba: <strong>Rp{{ number_format($laba, 0, ',', '.') }}</strong></p>
+    <p>Total Pemasukan: <strong>Rp{{ number_format($total_pemasukan, 0, '.', ',') }}</strong></p>
+    <p>Total Pengeluaran: <strong>Rp{{ number_format($total_pengeluaran, 0, '.', ',') }}</strong></p>
+    <p>Laba: <strong>Rp{{ number_format($laba, 0, '.', ',') }}</strong></p>
+    <p>Persentase Laba: <strong>{{ number_format($persentase_laba_total, 2, '.', ',') }}%</strong></p>
 
     <h3>Transaksi</h3>
     <table>
@@ -52,13 +53,13 @@
                     <td>{{ $transaction->unique_code ?: '-' }}</td>
                     <td>{{ $transaction->description }}</td>
                     <td>
-                        Penjualan - Rp{{ number_format($transaction->sales_total, 0, ',', ',') }}<br>
-                        Produksi - Rp{{ number_format($transaction->productions_total, 0, ',', ',') }}<br>
-                        Pengeluaran lain - Rp{{ number_format($transaction->expenses_total, 0, ',', ',') }}<br>
-                        Pemasukan lain - Rp{{ number_format($transaction->other_incomes_total, 0, ',', ',') }}
+                        Penjualan - Rp{{ number_format($transaction->sales_total, 0, '.', ',') }}<br>
+                        Produksi - Rp{{ number_format($transaction->productions_total, 0, '.', ',') }}<br>
+                        Pengeluaran lain - Rp{{ number_format($transaction->expenses_total, 0, '.', ',') }}<br>
+                        Pemasukan lain - Rp{{ number_format($transaction->other_incomes_total, 0, '.', ',') }}
                     </td>
                     <td>
-                        Rp{{ number_format(($transaction->persentase_laba * $transaction->sales_total) / 100) }}<br>
+                        Rp{{ number_format($transaction->total) }}<br>
                         {{ $transaction->persentase_laba }}%
                     </td>
                     <td>{{ $transaction->source }}</td>
@@ -71,7 +72,7 @@
                             <li>Data Transaksi Penjualan:
                                 <ul>
                                     @foreach ($transaction->sales as $sale)
-                                        <li>Rp {{ number_format($sale->amount, 0, ',', '.') }} ({{ $sale->description }})</li>
+                                        <li>Rp {{ number_format($sale->amount, 0, '.', ',') }} ({{ $sale->description }})</li>
                                     @endforeach
                                 </ul>
                             </li>
@@ -79,7 +80,7 @@
                             <li>Data Transaksi Produksi:
                                 <ul>
                                     @foreach ($transaction->productions as $production)
-                                        <li>Rp {{ number_format($production->amount, 0, ',', '.') }} ({{ $production->description }})</li>
+                                        <li>Rp {{ number_format($production->amount, 0, '.', ',') }} ({{ $production->description }})</li>
                                     @endforeach
                                 </ul>
                             </li>
@@ -87,7 +88,7 @@
                             <li>Data Pengeluaran Lainnya:
                                 <ul>
                                     @foreach ($transaction->expenses as $expense)
-                                        <li>Rp {{ number_format($expense->amount, 0, ',', '.') }} ({{ $expense->description }})</li>
+                                        <li>Rp {{ number_format($expense->amount, 0, '.', ',') }} ({{ $expense->description }})</li>
                                     @endforeach
                                 </ul>
                             </li>
@@ -95,7 +96,7 @@
                             <li>Data Pendapatan Lainnya:
                                 <ul>
                                     @foreach ($transaction->otherIncomes as $income)
-                                        <li>Rp {{ number_format($income->amount, 0, ',', '.') }} ({{ $income->description }})</li>
+                                        <li>Rp {{ number_format($income->amount, 0, '.', ',') }} ({{ $income->description }})</li>
                                     @endforeach
                                 </ul>
                             </li>
@@ -124,7 +125,7 @@
             <tr>
                 <td>{{ $expense->description }}</td>
                 <td>{{ $expense->date }}</td>
-                <td>Rp{{ number_format($expense->amount, 0, ',', '.') }}</td>
+                <td>Rp{{ number_format($expense->amount, 0, '.', ',') }}</td>
             </tr>
             @empty
             <tr>
@@ -148,7 +149,7 @@
             <tr>
                 <td>{{ $income->description }}</td>
                 <td>{{ $income->date }}</td>
-                <td>Rp{{ number_format($income->amount, 0, ',', '.') }}</td>    
+                <td>Rp{{ number_format($income->amount, 0, '.', ',') }}</td>    
             </tr>
             @empty
             <tr>

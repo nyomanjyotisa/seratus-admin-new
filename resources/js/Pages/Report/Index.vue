@@ -40,6 +40,7 @@ const props = defineProps({
     total_pemasukan: Number,
     total_pengeluaran: Number,
     laba: Number,
+    persentase_laba_total: Number,
     disabled: {
         type: Boolean,
         default: false,
@@ -365,6 +366,20 @@ const addBagiHasil = () => {
                             class="whitespace-nowrap py-4 px-2 sm:py-3"
                         >
                             <strong> Rp{{laba.toLocaleString()}} </strong>
+                        </td>
+                    </tr>
+                    <tr
+                        class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-200/30 hover:dark:bg-slate-900/20"
+                    >
+                        <td
+                            class="whitespace-nowrap py-4 px-2 sm:py-3"
+                        >
+                            Persentase Laba
+                        </td>
+                        <td
+                            class="whitespace-nowrap py-4 px-2 sm:py-3"
+                        >
+                            <strong> {{persentase_laba_total.toFixed(2)}}% </strong>
                         </td>
                     </tr>
                 </tbody>
