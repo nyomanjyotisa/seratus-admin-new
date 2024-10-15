@@ -510,7 +510,7 @@ const addBagiHasil = () => {
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     <p> <strong> Rp{{ transaction.total.toLocaleString() ?? '-' }} </strong> </p>
-                                    <p> {{ transaction.persentase_laba ?? '-' }} % </p>
+                                    <p :class="(transaction.persentase_laba > 60 || transaction.persentase_laba < 30 )  ? 'text-red-600' : ''"> {{ transaction.persentase_laba ?? '-' }} % </p>
                                 </td>
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">
                                     {{ transaction.source }}
