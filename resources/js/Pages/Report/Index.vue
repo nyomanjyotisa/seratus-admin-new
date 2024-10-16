@@ -445,6 +445,8 @@ const addBagiHasil = () => {
                 :show="data.showModal"
                 :title="data.modalTitle"
                 :message="data.modalMessage"
+                okText="YA"
+                cancelText="TIDAK"
                 @confirm="handleConfirm"
                 @cancel="handleCancel"
             />

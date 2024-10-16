@@ -4,6 +4,7 @@ import Breadcrumb from "@/Components/Breadcrumb.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 
 const localPrice = ref(0);
 const aboardPrice = ref(0);
@@ -11,7 +12,8 @@ const aboardPrice = ref(0);
 const panjang = ref('');
 const lebar = ref('');
 const tinggi = ref('');
-const berat = ref('');
+const berat = ref(null);
+const showModal = ref(false);
 
 const form = ref({
   productionCost: (''),
@@ -91,6 +93,17 @@ const volume = computed(() => {
 const aboardVolume = computed(() => {
   return calculateVolume(panjang.value, lebar.value, tinggi.value, 5000, berat.value);
 });
+
+const checkWeight = () => {
+    if (berat.value < 50 && berat.value != null) {
+        showModal.value = true;
+    }
+};
+
+const resetWeight = () => {
+    berat.value = null;
+    showModal.value = false;
+};
 
 const handleInput = (field) => (event) => {
   let input = event.target.value.replace(/[^\d,\.]/g, '');
@@ -184,6 +197,23 @@ watchEffect(() => {
 
                     <div class="flex space-x-4">
                         <div class="input-group">
+                            <label for="berat" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berat Produk</label>
+                            <div class="relative mt-1">
+                              <input type="number" 
+                                  v-model="berat" 
+                                  id="berat" 
+                                  class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
+                                  @blur="checkWeight"
+                                  placeholder="Masukkan Berat" />
+                              <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
+                                  gr
+                              </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-4">
+                        <div class="input-group">
                             <label for="panjang" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Panjang</label>
                             <div class="relative mt-1">
                               <input type="number" 
@@ -221,21 +251,6 @@ watchEffect(() => {
                                   placeholder="Masukkan Tinggi" />
                               <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 ">
                                   cm
-                              </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex space-x-4">
-                        <div class="input-group">
-                            <label for="berat" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berat Produk</label>
-                            <div class="relative mt-1">
-                              <input type="number" 
-                                  v-model="berat" 
-                                  id="berat" 
-                                  class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
-                                  placeholder="Masukkan Berat" />
-                              <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
-                                  gr
                               </span>
                             </div>
                         </div>
@@ -291,5 +306,14 @@ watchEffect(() => {
                 </div>
             </div>
         </div>
+        <ConfirmationModal
+          v-if="showModal"
+          :show="showModal"
+          title="Berat Produk Tidak Valid"
+          message="Harap masukkan berat dalam Gram, jangan Kilogram. 1 Kilogram = 1000 Gram."
+          okText="OK"
+          :showCancel="false"
+          @confirm="resetWeight"
+        />
     </AuthenticatedLayout>
 </template>
