@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watchEffect } from "vue";
+import { ref, computed, watchEffect, onMounted } from "vue";
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
@@ -12,6 +12,9 @@ const aboardPrice = ref(0);
 const panjang = ref('');
 const lebar = ref('');
 const tinggi = ref('');
+const extraPanjang = ref(6);
+const extraLebar = ref(6);
+const extraTinggi = ref(6);
 const berat = ref(null);
 const showModal = ref(false);
 
@@ -35,6 +38,36 @@ const formatCurrency = (value) => {
 const formatNumber = (value) => {
   if (!value) return "";
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+const countCommas = (str) => (str.match(/,/g) || []).length;
+
+const handleBeratInput = (event) => {
+  const input = event.target;
+  let inputValue = input.value;
+
+  const initialCursorPosition = input.selectionStart;
+  const initialCommaCount = countCommas(inputValue);
+
+  inputValue = inputValue.replace(/[^0-9.]/g, '');
+
+  if (/^\d*\.?\d*$/.test(inputValue)) {
+    let [integerPart, decimalPart] = inputValue.split('.');
+
+    integerPart = new Intl.NumberFormat().format(Number(integerPart));
+
+    beratDisplay.value = decimalPart !== undefined ? `${integerPart}.${decimalPart}` : integerPart;
+
+    berat.value = inputValue;
+
+    const newCommaCount = countCommas(beratDisplay.value);
+    const commaDiff = newCommaCount - initialCommaCount;
+    const newCursorPosition = initialCursorPosition + commaDiff;
+
+    setTimeout(() => {
+      input.selectionStart = input.selectionEnd = newCursorPosition;
+    });
+  }
 };
 
 const unformatNumber = (value) => {
@@ -68,13 +101,16 @@ const calculatePrices = () => {
   aboardPrice.value = Math.ceil((totalCost * 2.5 - shipToCustomerVal) / 10000) * 10000;
 };
 
-const calculateVolume = (length, width, height, divisor, weight) => {
+const calculateVolume = (length, width, height, divisor, weight, extraLength, extraWidth, extraHeight) => {
   const parsedLength = parseNumber(length);
   const parsedWidth = parseNumber(width);
   const parsedHeight = parseNumber(height);
   const parsedWeight = parseNumber(weight);
+  const parsedExtraLength = parseNumber(extraLength);
+  const parsedExtraWidth = parseNumber(extraWidth);
+  const parsedExtraHeight = parseNumber(extraHeight);
 
-  const calculatedVolume = (((parsedLength + 6) * (parsedWidth + 6) * (parsedHeight + 6)) / divisor)*1000;
+  const calculatedVolume = (((parsedLength + parsedExtraLength) * (parsedWidth + parsedExtraWidth) * (parsedHeight + parsedExtraHeight)) / divisor)*1000;
   if (parsedLength <= 0 || parsedWidth <= 0 || parsedHeight <= 0) {
     return 0;
   }
@@ -82,16 +118,15 @@ const calculateVolume = (length, width, height, divisor, weight) => {
   if (parsedWeight > calculatedVolume) {
     return parsedWeight;
   }
-
   return calculatedVolume.toFixed(0);
 };
 
 const volume = computed(() => {
-  return calculateVolume(panjang.value, lebar.value, tinggi.value, 6000, berat.value);
+  return calculateVolume(panjang.value, lebar.value, tinggi.value, 6000, berat.value, extraPanjang.value, extraLebar.value, extraTinggi.value);
 });
 
 const aboardVolume = computed(() => {
-  return calculateVolume(panjang.value, lebar.value, tinggi.value, 5000, berat.value);
+  return calculateVolume(panjang.value, lebar.value, tinggi.value, 5000, berat.value, extraPanjang.value, extraLebar.value, extraTinggi.value);
 });
 
 const checkWeight = () => {
@@ -102,6 +137,7 @@ const checkWeight = () => {
 
 const resetWeight = () => {
     berat.value = null;
+    beratDisplay.value = '';
     showModal.value = false;
 };
 
@@ -115,10 +151,26 @@ const handleShipKurasiInput = handleInput('shippingToKurasi');
 const handleShiptoCustomerInput = handleInput('shippingToCustomer');
 const handleAnotherCostInput = handleInput('anotherCost');
 
+
 const productionCostDisplay = ref("");
 const shippingToKurasiDisplay = ref('');
 const shippingToCustomerDisplay = ref('');
 const anotherCostDisplay = ref('');
+const beratDisplay = ref('');
+const panjangDisplay = ref('');
+const lebarDisplay = ref('');
+const tinggiDisplay = ref('');
+const extraPanjangDisplay = ref(6);
+const extraLebarDisplay = ref(6);
+const extraTinggiDisplay = ref(6);
+
+const prodInput = ref(null);
+
+onMounted(() => {
+  if (prodInput.value) {
+    prodInput.value.focus();
+  }
+});
 
 watchEffect(() => {
   productionCostDisplay.value = formatNumber(form.value.productionCost);
@@ -143,6 +195,7 @@ watchEffect(() => {
                                   id="productionCost" 
                                   class="w-full pl-8 pr-2 border rounded-md dark:bg-slate-900 dark:border-slate-600" 
                                   @input="handleProdInput"
+                                  ref="prodInput"
                                   placeholder="Masukkan harga produksi" />
                             <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
                                 Rp
@@ -197,12 +250,13 @@ watchEffect(() => {
 
                     <div class="flex space-x-4">
                         <div class="input-group">
-                            <label for="berat" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berat Produk</label>
+                            <label for="berat" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berat Aktual Produk</label>
                             <div class="relative mt-1">
-                              <input type="number" 
-                                  v-model="berat" 
+                              <input type="text" 
+                                  v-model="beratDisplay" 
                                   id="berat" 
                                   class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
+                                  @input="handleBeratInput"
                                   @blur="checkWeight"
                                   placeholder="Masukkan Berat" />
                               <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
@@ -214,7 +268,7 @@ watchEffect(() => {
 
                     <div class="flex space-x-4">
                         <div class="input-group">
-                            <label for="panjang" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Panjang</label>
+                            <label for="panjang" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Panjang Aktual</label>
                             <div class="relative mt-1">
                               <input type="number" 
                                   v-model="panjang" 
@@ -228,7 +282,7 @@ watchEffect(() => {
                         </div>
 
                         <div class="input-group">
-                            <label for="lebar" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lebar</label>
+                            <label for="lebar" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lebar Aktual</label>
                             <div class="relative mt-1">
                               <input type="number" 
                                   v-model="lebar" 
@@ -242,13 +296,66 @@ watchEffect(() => {
                         </div>
 
                         <div class="input-group">
-                            <label for="tinggi" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tinggi</label>
+                            <label for="tinggi" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tinggi Aktual</label>
                             <div class="relative mt-1">
                               <input type="number" 
                                   v-model="tinggi" 
                                   id="tinggi" 
                                   class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
                                   placeholder="Masukkan Tinggi" />
+                              <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 ">
+                                  cm
+                              </span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="block text-sm font-medium text-gray-700 dark:text-gray-100">
+                      <strong class="font-bold">Note:</strong>
+                    </p>
+                    <p class="block text-sm font-medium text-gray-700 dark:text-gray-100">
+                      <strong class="font-bold">• Default value untuk tambahan PxLxT adalah 6 cm, dengan asumsi dimensi barang bertambah 6 cm setelah packing</strong>
+                    </p>
+                    <p class="block text-sm font-medium text-gray-700 dark:text-gray-100">
+                      <strong class="font-bold">• Ganti value tambahan PxLxT sesuai dengan tambahan dimensi setelah packing (Jika perlu)</strong>
+                    </p>
+
+                    <div class="flex space-x-4">
+                        <div class="input-group">
+                            <label for="extraPanjang" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tambahan Panjang</label>
+                            <div class="relative mt-1">
+                              <input type="number" 
+                                  v-model="extraPanjang" 
+                                  id="extraPanjang" 
+                                  class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
+                                  placeholder="Tambahan Panjang" />
+                              <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
+                                  cm
+                              </span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="extraLebar" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tambahan Lebar</label>
+                            <div class="relative mt-1">
+                              <input type="number" 
+                                  v-model="extraLebar" 
+                                  id="extraLebar" 
+                                  class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
+                                  placeholder="Tambahan Lebar" />
+                              <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
+                                  cm
+                              </span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="extraTinggi" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tambahan Tinggi</label>
+                            <div class="relative mt-1">
+                              <input type="number" 
+                                  v-model="extraTinggi" 
+                                  id="extraTinggi" 
+                                  class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
+                                  placeholder="Tambahan Tinggi" />
                               <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 ">
                                   cm
                               </span>
@@ -284,11 +391,11 @@ watchEffect(() => {
                             </tr>
                             <tr class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-200/30 hover:dark:bg-slate-900/20">
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">Volume Lokal</td>
-                                <td class="whitespace-nowrap py-4 px-2 sm:py-3"><strong> {{volume}} gram </strong></td>
+                                <td class="whitespace-nowrap py-4 px-2 sm:py-3"><strong> {{new Intl.NumberFormat().format(volume)}} gram </strong></td>
                             </tr>
                             <tr class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-200/30 hover:dark:bg-slate-900/20">
                                 <td class="whitespace-nowrap py-4 px-2 sm:py-3">Volume Luar</td>
-                                <td class="whitespace-nowrap py-4 px-2 sm:py-3"><strong> {{aboardVolume}} gram </strong></td>
+                                <td class="whitespace-nowrap py-4 px-2 sm:py-3"><strong> {{new Intl.NumberFormat().format(aboardVolume)}} gram </strong></td>
                             </tr>
                         </tbody>
                       </table>
@@ -300,15 +407,15 @@ watchEffect(() => {
                         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Proses Kalkulasi</h2><br>
                         <pre>Harga Jual Lokal: <br><strong>CEILING((Harga Produksi + Biaya Lainnya) / (1 - 0.33 + 0.1), 10000)</strong></pre><br>
                         <pre>Harga Jual Luar: <br><strong>CEILING(((Harga Produksi + Ongkir to Kurasi + Ongkir to Customer + Biaya Lainnya) * 2.5) - Ongkir to Customer, 10000)</strong></pre><br>
-                        <pre>Volume Produk Lokal: <br><strong>((Panjang + 6) * (Lebar + 6) * (Tinggi + 6))/6000</strong></pre><br>
-                        <pre>Volume Produk Luar: <br><strong>((Panjang + 6) * (Lebar + 6) * (Tinggi + 6))/5000</strong></pre><br>
+                        <pre>Volume Produk Lokal: <br><strong>((Panjang Aktual + Panjang Tambahan) * (Lebar Aktual + Lebar Tambahan) * (Tinggi Aktual + Tinggi Tambahan))/6000</strong></pre><br>
+                        <pre>Volume Produk Luar: <br><strong>((Panjang Aktual + Panjang Tambahan) * (Lebar Aktual + Lebar Tambahan) * (Tinggi Aktual + Tinggi Tambahan))/5000</strong></pre><br>
                     </div>
                 </div>
             </div>
         </div>
         <ConfirmationModal
           v-if="showModal"
-          :show="showModal"
+          v-model:show="showModal"
           title="Berat Produk Tidak Valid"
           message="Harap masukkan berat dalam Gram, jangan Kilogram. 1 Kilogram = 1000 Gram."
           okText="OK"
