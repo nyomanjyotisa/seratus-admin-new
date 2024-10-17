@@ -7,7 +7,7 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import SelectInput from "@/Components/SelectInput.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { useForm } from "@inertiajs/vue3";
-import { watchEffect, ref } from "vue";
+import { watchEffect, ref, nextTick } from "vue";
 
 const props = defineProps({
     show: Boolean,
@@ -18,6 +18,7 @@ const props = defineProps({
 
 const isShowNonMPFields = ref(false)
 const isDP = ref(false)
+const amountInput = ref(null); 
 
 if(props.transaction.source == 'shopee' || props.transaction.source == 'tokped' || props.transaction.source == 'etsy' || props.transaction.source == 'amazon' || props.transaction.source == 'ebay' || props.transaction.source == 'website'){
     isShowNonMPFields.value = false;
@@ -69,6 +70,12 @@ const onChange = (event) => {
 
 watchEffect(() => {
     if (props.show) {
+        nextTick(() => {
+            if (amountInput.value) {
+                amountInput.value.$el.focus();
+            }
+        });
+
         var date = new Date(props.sale?.date);
         date.setHours(date.getHours() + 8);
 
@@ -199,6 +206,7 @@ watchEffect(() => {
                                 @input="handleInput"
                                 placeholder="ex: 100,000"
                                 :error="form.errors.amount"
+                                ref="amountInput"
                             />
                             <InputError class="mt-2" :message="form.errors.amount" />
                             <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
