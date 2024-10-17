@@ -118,7 +118,7 @@ const aboardVolume = computed(() => {
 });
 
 const checkWeight = () => {
-    if (berat.value < 50 && berat.value != null) {
+    if (berat.value < 50 && berat.value != null && berat.value != '') {
         showModal.value = true;
     }
 };
