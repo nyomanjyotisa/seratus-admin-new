@@ -17,6 +17,11 @@ const extraLebar = ref(6);
 const extraTinggi = ref(6);
 const berat = ref(null);
 const showModal = ref(false);
+const productionCostDisplay = ref("");
+const shippingToKurasiDisplay = ref('');
+const shippingToCustomerDisplay = ref('');
+const anotherCostDisplay = ref('');
+const prodInput = ref(null);
 
 const form = ref({
   productionCost: (''),
@@ -35,39 +40,22 @@ const formatCurrency = (value) => {
   return formattedValue.replace(/\./g, ',');
 };
 
+const formatDimension = (value) => {
+  value = value.replace(/[^0-9.]/g, '');
+  
+  const parts = value.split('.');
+  if (parts.length > 2) {
+    value = parts[0] + '.' + parts.slice(1).join('');
+  }
+  
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  return parts.join('.');
+};
+
 const formatNumber = (value) => {
   if (!value) return "";
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
-
-const countCommas = (str) => (str.match(/,/g) || []).length;
-
-const handleBeratInput = (event) => {
-  const input = event.target;
-  let inputValue = input.value;
-
-  const initialCursorPosition = input.selectionStart;
-  const initialCommaCount = countCommas(inputValue);
-
-  inputValue = inputValue.replace(/[^0-9.]/g, '');
-
-  if (/^\d*\.?\d*$/.test(inputValue)) {
-    let [integerPart, decimalPart] = inputValue.split('.');
-
-    integerPart = new Intl.NumberFormat().format(Number(integerPart));
-
-    beratDisplay.value = decimalPart !== undefined ? `${integerPart}.${decimalPart}` : integerPart;
-
-    berat.value = inputValue;
-
-    const newCommaCount = countCommas(beratDisplay.value);
-    const commaDiff = newCommaCount - initialCommaCount;
-    const newCursorPosition = initialCursorPosition + commaDiff;
-
-    setTimeout(() => {
-      input.selectionStart = input.selectionEnd = newCursorPosition;
-    });
-  }
 };
 
 const unformatNumber = (value) => {
@@ -137,7 +125,6 @@ const checkWeight = () => {
 
 const resetWeight = () => {
     berat.value = null;
-    beratDisplay.value = '';
     showModal.value = false;
 };
 
@@ -151,20 +138,40 @@ const handleShipKurasiInput = handleInput('shippingToKurasi');
 const handleShiptoCustomerInput = handleInput('shippingToCustomer');
 const handleAnotherCostInput = handleInput('anotherCost');
 
+const updateBerat = (event) => {
+  const formattedValue = formatDimension(event.target.value);
+  berat.value = formattedValue;
+};
 
-const productionCostDisplay = ref("");
-const shippingToKurasiDisplay = ref('');
-const shippingToCustomerDisplay = ref('');
-const anotherCostDisplay = ref('');
-const beratDisplay = ref('');
-const panjangDisplay = ref('');
-const lebarDisplay = ref('');
-const tinggiDisplay = ref('');
-const extraPanjangDisplay = ref(6);
-const extraLebarDisplay = ref(6);
-const extraTinggiDisplay = ref(6);
+const updatePanjang = (event) => {
+  const formattedValue = formatDimension(event.target.value);
+  panjang.value = formattedValue;
+};
 
-const prodInput = ref(null);
+const updateLebar = (event) => {
+  const formattedValue = formatDimension(event.target.value);
+  lebar.value = formattedValue;
+};
+
+const updateTinggi = (event) => {
+  const formattedValue = formatDimension(event.target.value);
+  tinggi.value = formattedValue;
+};
+
+const updateExtraPanjang = (event) => {
+  const formattedValue = formatDimension(event.target.value);
+  extraPanjang.value = formattedValue;
+};
+
+const updateExtraLebar = (event) => {
+  const formattedValue = formatDimension(event.target.value);
+  extraLebar.value = formattedValue;
+};
+
+const updateExtraTinggi = (event) => {
+  const formattedValue = formatDimension(event.target.value);
+  extraTinggi.value = formattedValue;
+};
 
 onMounted(() => {
   if (prodInput.value) {
@@ -253,10 +260,10 @@ watchEffect(() => {
                             <label for="berat" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berat Aktual Produk</label>
                             <div class="relative mt-1">
                               <input type="text" 
-                                  v-model="beratDisplay" 
+                                  v-model="berat" 
                                   id="berat" 
                                   class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
-                                  @input="handleBeratInput"
+                                  @input="updateBerat"
                                   @blur="checkWeight"
                                   placeholder="Masukkan Berat" />
                               <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
@@ -270,10 +277,11 @@ watchEffect(() => {
                         <div class="input-group">
                             <label for="panjang" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Panjang Aktual</label>
                             <div class="relative mt-1">
-                              <input type="number" 
+                              <input type="text" 
                                   v-model="panjang" 
                                   id="panjang" 
                                   class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
+                                  @input="updatePanjang"
                                   placeholder="Masukkan Panjang" />
                               <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
                                   cm
@@ -284,10 +292,11 @@ watchEffect(() => {
                         <div class="input-group">
                             <label for="lebar" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lebar Aktual</label>
                             <div class="relative mt-1">
-                              <input type="number" 
+                              <input type="text" 
                                   v-model="lebar" 
                                   id="lebar" 
                                   class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
+                                  @input="updateLebar"
                                   placeholder="Masukkan Lebar" />
                               <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
                                   cm
@@ -298,10 +307,11 @@ watchEffect(() => {
                         <div class="input-group">
                             <label for="tinggi" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tinggi Aktual</label>
                             <div class="relative mt-1">
-                              <input type="number" 
+                              <input type="text" 
                                   v-model="tinggi" 
                                   id="tinggi" 
                                   class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
+                                  @input="updateTinggi"
                                   placeholder="Masukkan Tinggi" />
                               <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 ">
                                   cm
@@ -313,20 +323,21 @@ watchEffect(() => {
                       <strong class="font-bold">Note:</strong>
                     </p>
                     <p class="block text-sm font-medium text-gray-700 dark:text-gray-100">
-                      <strong class="font-bold">• Default value untuk tambahan PxLxT adalah 6 cm, dengan asumsi dimensi barang bertambah 6 cm setelah packing</strong>
+                      <strong class="font-bold">• Ganti value tambahan PxLxT sesuai dengan tambahan dimensi setelah packing (Jika perlu)</strong>
                     </p>
                     <p class="block text-sm font-medium text-gray-700 dark:text-gray-100">
-                      <strong class="font-bold">• Ganti value tambahan PxLxT sesuai dengan tambahan dimensi setelah packing (Jika perlu)</strong>
+                      <strong class="font-bold">• Default value untuk tambahan PxLxT adalah 6 cm, dengan asumsi dimensi barang bertambah 6 cm setelah packing</strong>
                     </p>
 
                     <div class="flex space-x-4">
                         <div class="input-group">
                             <label for="extraPanjang" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tambahan Panjang</label>
                             <div class="relative mt-1">
-                              <input type="number" 
+                              <input type="text" 
                                   v-model="extraPanjang" 
                                   id="extraPanjang" 
                                   class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
+                                  @input="updateExtraPanjang"
                                   placeholder="Tambahan Panjang" />
                               <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
                                   cm
@@ -337,10 +348,11 @@ watchEffect(() => {
                         <div class="input-group">
                             <label for="extraLebar" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tambahan Lebar</label>
                             <div class="relative mt-1">
-                              <input type="number" 
+                              <input type="text" 
                                   v-model="extraLebar" 
                                   id="extraLebar" 
                                   class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
+                                  @input="updateExtraLebar"
                                   placeholder="Tambahan Lebar" />
                               <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300">
                                   cm
@@ -351,10 +363,11 @@ watchEffect(() => {
                         <div class="input-group">
                             <label for="extraTinggi" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tambahan Tinggi</label>
                             <div class="relative mt-1">
-                              <input type="number" 
+                              <input type="text" 
                                   v-model="extraTinggi" 
                                   id="extraTinggi" 
                                   class="w-full pr-8 pl-2 border rounded-md dark:bg-slate-900 dark:border-slate-600"  
+                                  @input="updateExtraTinggi"
                                   placeholder="Tambahan Tinggi" />
                               <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 ">
                                   cm
@@ -366,14 +379,6 @@ watchEffect(() => {
                     <div class="mt-4">
                         <PrimaryButton @click="calculatePrices">Kalkulasi</PrimaryButton>
                     </div>
-
-                    <!-- <div class="results mt-4">
-                        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Hasil Kalkukasi</h2><br>
-                        <p>Harga Jual Lokal: <br>{{ formatCurrency(localPrice) }}</p><br>
-                        <p>Harga Jual Luar: <br>{{ formatCurrency(aboardPrice) }}</p><br>
-                        <p>Volume Produk Lokal: <br>{{ volume }} gram</p><br>
-                        <p>Volume Produk Luar: <br>{{ aboardVolume }} gram</p><br>
-                    </div> -->
 
                     <hr class="my-4 border-t border-slate-200 dark:border-slate-700" />
 
