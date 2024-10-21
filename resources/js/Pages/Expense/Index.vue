@@ -6,7 +6,7 @@ import TextInput from "@/Components/TextInput.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InfoButton from "@/Components/InfoButton.vue";
 import SelectInput from "@/Components/SelectInput.vue";
-import { reactive, watch } from "vue";
+import { reactive, watch, ref, onMounted } from "vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import pkg from "lodash";
 import { router } from "@inertiajs/vue3";
@@ -27,6 +27,7 @@ import { usePage } from "@inertiajs/vue3";
 import { Link } from "@inertiajs/vue3";
 
 const { _, debounce, pickBy } = pkg;
+const searchInput = ref(null);
 const props = defineProps({
     title: String,
     filters: Object,
@@ -85,6 +86,12 @@ const select = () => {
         data.multipleSelect = false;
     }
 };
+
+onMounted(() => {
+    if (searchInput.value) {
+        searchInput.value.focus();
+    }
+});
 </script>
 
 <template>
@@ -154,6 +161,7 @@ const select = () => {
                     <TextInput
                         v-model="data.params.search"
                         type="text"
+                        ref="searchInput"
                         class="ml-3 block w-full rounded-lg"
                         :placeholder="lang().placeholder.search"
                     />

@@ -5,11 +5,13 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import SelectInput from "@/Components/SelectInput.vue";
 import { Link, useForm, usePage } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 const props = defineProps({
     transaction: Object,    
 });
+
+const sourceInput = ref(null); 
 
 const isShowUniqueCode = ref(false)
 
@@ -110,6 +112,11 @@ const onChange = (event) => {
 
 console.log(form.date)
 
+onMounted(() => {
+  if (sourceInput.value && sourceInput.value.$el) {
+    sourceInput.value.$el.focus();
+  }
+});
 </script>
 
 <template>
@@ -131,6 +138,7 @@ console.log(form.date)
                     id="source"
                     class="mt-1 block w-full"
                     v-model="form.source"
+                    ref="sourceInput"
                     required
                     :dataSet="sources"
                     @change="onChange($event)"

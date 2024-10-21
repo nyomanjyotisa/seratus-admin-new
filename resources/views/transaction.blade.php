@@ -60,7 +60,9 @@
                     </td>
                     <td>
                         Rp{{ number_format($transaction->total) }}<br>
-                        {{ $transaction->persentase_laba }}%
+                        <p style="margin: 0; color: {{ ($transaction->persentase_laba > 60 || $transaction->persentase_laba < 30) ? 'red' : 'black' }}">
+                            {{ $transaction->persentase_laba ?? '-' }}%
+                        </p>
                     </td>
                     <td>{{ $transaction->source }}</td>
                     <td>{{ $transaction->date }}</td>

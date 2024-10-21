@@ -7,13 +7,15 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import SelectInput from "@/Components/SelectInput.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { useForm } from "@inertiajs/vue3";
-import { watchEffect, ref } from "vue";
+import { watchEffect, ref, nextTick } from "vue";
 
 const props = defineProps({
     show: Boolean,
     title: String,
     roles: Object,
 });
+
+const sourceInput = ref(null); 
 
 const isShowUniqueCode = ref(false)
 
@@ -48,6 +50,11 @@ const onChange = (event) => {
 
 watchEffect(() => {
     if (props.show) {
+        nextTick(() => {
+            if (sourceInput.value) {
+                sourceInput.value.$el.focus();
+            }
+        });
         form.errors = {};
     }
 });
@@ -125,6 +132,7 @@ const sources = [
                             id="source"
                             class="mt-1 block w-full"
                             v-model="form.source"
+                            ref="sourceInput"
                             required
                             :dataSet="sources"
                             @change="onChange($event)"
