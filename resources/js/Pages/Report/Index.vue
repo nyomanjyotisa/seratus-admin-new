@@ -236,7 +236,7 @@ const formLaba = useForm({
 
 const formBagiHasil = useForm({
     laba: (() => {
-         const maxSaldo = 50000000;
+         const maxSaldo = parseInt(localStorage.getItem('maksimalSaldoKas') || '50000000', 10);
          const newSaldo = props.saldo;
          const defaultBagiHasil = Math.ceil((props.laba * 2 / 3) / 100000) * 100000;
 
@@ -305,6 +305,8 @@ const addBagiHasil = () => {
             // Save the state in localStorage
             localStorage.setItem(`bagiHasil-${props.year}-${props.month}`, 'clicked');
             console.log('Bagi hasil berhasil ditambahkan ke kas');
+
+            window.location.reload();
         },
         onError: () => {
             console.error('Error menambahkan bagi hasil ke kas');

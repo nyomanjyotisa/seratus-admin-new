@@ -11,6 +11,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PriceCalculatorController;
+use App\Http\Controllers\SettingController;
 use App\Models\Expense;
 use App\Models\OtherIncome;
 use App\Models\Permission;
@@ -113,6 +114,8 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/report/{year}/{month}/download', [TransactionController::class, 'downloadReport'])->name('report.download');
 
     Route::get('/calculator', [PriceCalculatorController::class, 'index'])->name('calculator.index');
+
+    Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
 });
 
 require __DIR__.'/auth.php';
