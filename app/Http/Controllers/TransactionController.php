@@ -10,6 +10,7 @@ use App\Models\Expense;
 use App\Models\OtherIncome;
 use App\Models\Role;
 use App\Models\Sale;
+use App\Models\Saldo;
 use App\Models\Transaction;
 use PDF;
 use Carbon\Carbon;
@@ -260,6 +261,11 @@ class TransactionController extends Controller
             $persentase_laba_total = 0;
         }
 
+        $saldomasuk = Saldo::where('type', 'masuk')->sum('amount');
+        $saldokeluar = Saldo::where('type', 'keluar')->sum('amount');
+    
+        $sisasaldo = $saldomasuk - $saldokeluar;
+
         return Inertia::render('Report/Index', [
             'title'         => 'Laporan',
             'filters'       => $request->all(['search', 'field', 'order']),
@@ -275,7 +281,8 @@ class TransactionController extends Controller
             'total_pemasukan'         => $total_pemasukan,
             'total_pengeluaran'       => $total_pengeluaran,
             'laba'          => $laba,
-            'persentase_laba_total'          => $persentase_laba_total
+            'persentase_laba_total'          => $persentase_laba_total,
+            'saldo'         => $sisasaldo,
         ]);
     }
 

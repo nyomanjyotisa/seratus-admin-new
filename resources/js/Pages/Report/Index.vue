@@ -46,6 +46,7 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    saldo: Number,
 });
 const data = reactive({
     params: {
@@ -234,7 +235,15 @@ const formLaba = useForm({
 });
 
 const formBagiHasil = useForm({
-    laba: Math.ceil((props.laba * 2 / 3) / 100000) * 100000,
+    laba: (() => {
+         const maxSaldo = 50000000;
+         const newSaldo = props.saldo;
+         const defaultBagiHasil = Math.ceil((props.laba * 2 / 3) / 100000) * 100000;
+
+         return newSaldo - defaultBagiHasil >= maxSaldo 
+             ? Math.floor((newSaldo - maxSaldo) / 100000) * 100000 
+             : defaultBagiHasil;
+    })(),
     type: 'keluar',
     description: `Bagi Hasil ${getMonthName(props.month)} ${props.year}`,
     date: '',
@@ -277,6 +286,8 @@ const addProfitToKas = () => {
             // Save the state in localStorage
             localStorage.setItem(`laba-${props.year}-${props.month}`, 'clicked');
             console.log('Laba berhasil ditambahkan ke kas');
+
+            window.location.reload();
         },
         onError: () => {
             console.error('Error menambahkan laba ke kas');
