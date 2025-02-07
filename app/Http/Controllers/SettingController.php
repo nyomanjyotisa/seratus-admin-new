@@ -14,7 +14,7 @@ class SettingController extends Controller
      */
     public function index()
     {
-        $maksimalSaldoKas = Setting::where('key', 'maksimal_saldo_kas')->value('value');
+        $maksimalSaldoKas = (int) Setting::where('key', 'maksimal_saldo_kas')->value('value');
         return Inertia::render('Setting/Index', ['maksimalSaldoKas' => $maksimalSaldoKas]);
     }    
 

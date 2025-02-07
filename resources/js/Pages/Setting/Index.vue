@@ -1,36 +1,38 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import axios from "axios";
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 
-function formatNumber(value) {
-  return new Intl.NumberFormat("id-ID").format(value);
-}
+const props = defineProps({
+    maksimalSaldoKas: Number,
+});
+
+const maksimalSaldoKasRef = ref(props.maksimalSaldoKas);
+
+const formatNumber = (value) => {
+  const formattedValue = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0,
+  }).format(value);
+  
+  return formattedValue.replace(/\./g, ',');
+};
 
 function removeSeparators(value) {
   return parseInt(value.replace(/\D/g, ""), 10) || 0;
 }
 
-const maksimalSaldoKas = ref(50000000);
 const isEditing = ref(false);
 const editedSaldo = ref("");
 const errorMessage = ref("");
 
-onMounted(async () => {
-  try {
-    const response = await axios.get("/setting");
-    maksimalSaldoKas.value = parseInt(response.data.maksimalSaldoKas) || 50000000;
-  } catch (error) {
-    console.error("Failed to load saldo:", error);
-  }
-});
-
 const startEditing = () => {
   isEditing.value = true;
-  editedSaldo.value = formatNumber(maksimalSaldoKas.value);
+  editedSaldo.value = formatNumber(maksimalSaldoKasRef.value);
   errorMessage.value = "";
 };
 
@@ -48,7 +50,7 @@ const saveSaldoKas = async () => {
 
   try {
     await axios.post("/setting/update", { maksimalSaldoKas: newValue });
-    maksimalSaldoKas.value = newValue;
+    maksimalSaldoKasRef.value = newValue;
     isEditing.value = false;
   } catch (error) {
     console.error("Failed to update saldo:", error);
@@ -74,7 +76,7 @@ const cancelEditing = () => {
           
           <div v-if="!isEditing" class="flex items-center justify-between bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-md">
             <span class="text-lg font-semibold text-gray-900 dark:text-gray-200">
-              Rp {{ maksimalSaldoKas.toLocaleString("id-ID") }}
+              {{ formatNumber(maksimalSaldoKasRef) }}
             </span>
             <PrimaryButton @click="startEditing">Edit</PrimaryButton>
           </div>
