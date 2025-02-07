@@ -60,6 +60,15 @@ class GlobalDataController extends Controller
         //
     }
 
+    public function get(Request $request)
+    {
+        $key = $request->query('key');
+        $record = GlobalData::where('key', $key)->first();
+        return response()->json([
+            'value' => $record ? $record->value : null
+        ]);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -67,9 +76,19 @@ class GlobalDataController extends Controller
      * @param  \App\Models\GlobalData  $globalData
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, GlobalData $globalData)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            'key'   => 'required|string',
+            'value' => 'required|string',
+        ]);
+
+        GlobalData::updateOrCreate(
+            ['key' => $request->key],
+            ['value' => $request->value]
+        );
+
+        return response()->json(['message' => 'Global data updated successfully']);
     }
 
     /**

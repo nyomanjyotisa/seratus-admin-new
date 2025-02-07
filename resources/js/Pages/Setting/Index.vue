@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import axios from "axios";
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
@@ -13,17 +14,17 @@ function removeSeparators(value) {
   return parseInt(value.replace(/\D/g, ""), 10) || 0;
 }
 
-// Load the value from localStorage or default to 50000000
-const maksimalSaldoKas = ref(parseInt(localStorage.getItem("maksimalSaldoKas")) || 50000000);
+const maksimalSaldoKas = ref(50000000);
 const isEditing = ref(false);
-const editedSaldo = ref(formatNumber(maksimalSaldoKas.value));
+const editedSaldo = ref("");
 const errorMessage = ref("");
 
-// Load stored value when the component mounts
-onMounted(() => {
-  const savedValue = localStorage.getItem("maksimalSaldoKas");
-  if (savedValue !== null) {
-    maksimalSaldoKas.value = parseInt(savedValue);
+onMounted(async () => {
+  try {
+    const response = await axios.get("/setting");
+    maksimalSaldoKas.value = parseInt(response.data.maksimalSaldoKas) || 50000000;
+  } catch (error) {
+    console.error("Failed to load saldo:", error);
   }
 });
 
@@ -38,15 +39,20 @@ const handleInput = (event) => {
   editedSaldo.value = formatNumber(rawValue);
 };
 
-const saveSaldoKas = () => {
+const saveSaldoKas = async () => {
   const newValue = removeSeparators(editedSaldo.value);
   if (newValue <= 0) {
     errorMessage.value = "Maksimal saldo kas tidak boleh 0 atau kosong.";
     return;
   }
-  maksimalSaldoKas.value = newValue;
-  localStorage.setItem("maksimalSaldoKas", newValue); // Save to localStorage
-  isEditing.value = false;
+
+  try {
+    await axios.post("/setting/update", { maksimalSaldoKas: newValue });
+    maksimalSaldoKas.value = newValue;
+    isEditing.value = false;
+  } catch (error) {
+    console.error("Failed to update saldo:", error);
+  }
 };
 
 const cancelEditing = () => {

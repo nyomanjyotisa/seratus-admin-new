@@ -11,6 +11,7 @@ use App\Models\OtherIncome;
 use App\Models\Role;
 use App\Models\Sale;
 use App\Models\Saldo;
+use App\Models\Setting;
 use App\Models\Transaction;
 use PDF;
 use Carbon\Carbon;
@@ -266,6 +267,8 @@ class TransactionController extends Controller
     
         $sisasaldo = $saldomasuk - $saldokeluar;
 
+        $maksimalSaldoKas = Setting::where('key', 'maksimal_saldo_kas')->value('value');
+
         return Inertia::render('Report/Index', [
             'title'         => 'Laporan',
             'filters'       => $request->all(['search', 'field', 'order']),
@@ -283,6 +286,7 @@ class TransactionController extends Controller
             'laba'          => $laba,
             'persentase_laba_total'          => $persentase_laba_total,
             'saldo'         => $sisasaldo,
+            'maksimalSaldoKas' => $maksimalSaldoKas,
         ]);
     }
 

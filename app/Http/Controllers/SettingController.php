@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Setting;
 use Inertia\Inertia;
 class SettingController extends Controller
 {
@@ -13,8 +14,9 @@ class SettingController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Setting/Index');
-    }
+        $maksimalSaldoKas = Setting::where('key', 'maksimal_saldo_kas')->value('value');
+        return Inertia::render('Setting/Index', ['maksimalSaldoKas' => $maksimalSaldoKas]);
+    }    
 
     /**
      * Show the form for creating a new resource.
@@ -66,9 +68,18 @@ class SettingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            'maksimalSaldoKas' => 'required|numeric|min:1',
+        ]);
+
+        Setting::updateOrCreate(
+            ['key' => 'maksimal_saldo_kas'],
+            ['value' => $request->maksimalSaldoKas]
+        );
+
+        return response()->json(['message' => 'Maksimal saldo kas updated successfully']);
     }
 
     /**

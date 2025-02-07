@@ -6,7 +6,7 @@ import TextInput from "@/Components/TextInput.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InfoButton from "@/Components/InfoButton.vue";
 import SelectInput from "@/Components/SelectInput.vue";
-import { reactive, watch, onMounted, computed } from "vue";
+import { ref, reactive, watch, onMounted, computed } from "vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import pkg from "lodash";
 import { router } from "@inertiajs/vue3";
@@ -24,6 +24,7 @@ import Checkbox from "@/Components/Checkbox.vue";
 import { usePage } from "@inertiajs/vue3";
 import { Link, useForm } from "@inertiajs/vue3";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
+import axios from 'axios';
 
 const { _, debounce, pickBy } = pkg;
 const props = defineProps({
@@ -47,6 +48,7 @@ const props = defineProps({
         default: false,
     },
     saldo: Number,
+    maksimalSaldoKas: Number,
 });
 const data = reactive({
     params: {
@@ -70,6 +72,8 @@ const data = reactive({
     modalTitle: '',
     modalMessage: '',
 });
+
+const globalStateLoading = ref(true);
 
 const downloadReport = () => {
     const year = props.year;
@@ -199,30 +203,44 @@ const getMonthName = (monthNumber) => {
 const isDateRestricted = computed(() => {
     const currentYear = parseInt(props.year);
     const currentMonth = parseInt(props.month);
-    return currentYear < 2024 || (currentYear === 2024 && currentMonth <= 5);
+    return currentYear < 2024 || (currentYear === 2024 && currentMonth <= 11);
 });
 
-// Load button states from localStorage
-const loadButtonStates = () => {
+const loadButtonStates = async () => {
+    globalStateLoading.value = true; // Start loading
+
     if (isDateRestricted.value) {
         data.labaButtonClicked = true;
         data.bagiHasilButtonDisabled = true;
+        globalStateLoading.value = false;
         return;
     }
 
-    const labaState = localStorage.getItem(`laba-${props.year}-${props.month}`);
-    if (labaState === 'clicked') {
-        data.labaButtonClicked = true;
-        data.bagiHasilButtonDisabled = false;
-    }
+    try {
+        // Get the state for "laba"
+        const labaResponse = await axios.get(route('globaldata.get'), {
+            params: { key: `laba-${props.year}-${props.month}` }
+        });
+        // If value is "clicked", mark it accordingly
+        if (labaResponse.data.value === 'clicked') {
+            data.labaButtonClicked = true;
+            data.bagiHasilButtonDisabled = false;
+        }
 
-    const bagiHasilState = localStorage.getItem(`bagiHasil-${props.year}-${props.month}`);
-    if (bagiHasilState === 'clicked') {
-        data.bagiHasilButtonDisabled = true;
+        // Get the state for "bagiHasil"
+        const bagiHasilResponse = await axios.get(route('globaldata.get'), {
+            params: { key: `bagiHasil-${props.year}-${props.month}` }
+        });
+        if (bagiHasilResponse.data.value === 'clicked') {
+            data.bagiHasilButtonDisabled = true;
+        }
+    } catch (error) {
+        console.error("Error loading global data", error);
+    } finally {
+        globalStateLoading.value = false;
     }
 };
 
-// Run this on component mount to load the previous states
 onMounted(() => {
     loadButtonStates();
 });
@@ -236,7 +254,7 @@ const formLaba = useForm({
 
 const formBagiHasil = useForm({
     laba: (() => {
-         const maxSaldo = parseInt(localStorage.getItem('maksimalSaldoKas') || '50000000', 10);
+         const maxSaldo = props.maksimalSaldoKas || 50000000;
          const newSaldo = props.saldo;
          const defaultBagiHasil = Math.ceil((props.laba * 2 / 3) / 100000) * 100000;
 
@@ -279,15 +297,22 @@ const addProfitToKas = () => {
     if (isDateRestricted.value || data.labaButtonClicked) return;
 
     formLaba.post(route("kas.tambahKas", { type: 'masuk' }), {
-        onSuccess: () => {
+        onSuccess: async () => {
             data.labaButtonClicked = true;
             data.bagiHasilButtonDisabled = false;  // Enable Bagi Hasil button
 
-            // Save the state in localStorage
-            localStorage.setItem(`laba-${props.year}-${props.month}`, 'clicked');
-            console.log('Laba berhasil ditambahkan ke kas');
+            // Update global data for "laba" state
+            try {
+                await axios.post(route('globaldata.update'), {
+                    key: `laba-${props.year}-${props.month}`,
+                    value: 'clicked'
+                });
+                console.log('Laba state updated in global data');
+                window.location.reload();
+            } catch (error) {
+                console.error('Error updating laba state', error);
+            }
 
-            window.location.reload();
         },
         onError: () => {
             console.error('Error menambahkan laba ke kas');
@@ -299,14 +324,21 @@ const addBagiHasil = () => {
     if (isDateRestricted.value || data.bagiHasilButtonDisabled) return;
 
     formBagiHasil.post(route("kas.tambahKas", { type: 'keluar' }), {
-        onSuccess: () => {
+        onSuccess: async () => {
             data.bagiHasilButtonDisabled = true;  // Disable after clicking
 
-            // Save the state in localStorage
-            localStorage.setItem(`bagiHasil-${props.year}-${props.month}`, 'clicked');
-            console.log('Bagi hasil berhasil ditambahkan ke kas');
+            // Update global data for "bagiHasil" state
+            try {
+                await axios.post(route('globaldata.update'), {
+                    key: `bagiHasil-${props.year}-${props.month}`,
+                    value: 'clicked'
+                });
+                console.log('Bagi Hasil state updated in global data');
+                window.location.reload();
+            } catch (error) {
+                console.error('Error updating bagi hasil state', error);
+            }
 
-            window.location.reload();
         },
         onError: () => {
             console.error('Error menambahkan bagi hasil ke kas');
@@ -446,7 +478,7 @@ const addBagiHasil = () => {
                     </tr>
                 </tbody>
             </table>
-            <PrimaryButton :disabled="data.labaButtonClicked || isDateRestricted" @click="showConfirmation('addProfit')">
+            <PrimaryButton :disabled="data.labaButtonClicked || isDateRestricted || globalStateLoading" @click="showConfirmation('addProfit')">
                 Tambahkan Laba ke Kas
             </PrimaryButton>
             <br>

@@ -12,6 +12,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PriceCalculatorController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\GlobalDataController;
 use App\Models\Expense;
 use App\Models\OtherIncome;
 use App\Models\Permission;
@@ -116,6 +117,11 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/calculator', [PriceCalculatorController::class, 'index'])->name('calculator.index');
 
     Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
+    Route::post('/setting/update', [SettingController::class, 'update'])->name('setting.update');
+
+    Route::get('/global-data', [GlobalDataController::class, 'get'])->name('globaldata.get');
+    Route::post('/global-data/update', [GlobalDataController::class, 'update'])->name('globaldata.update');
+
 });
 
 require __DIR__.'/auth.php';
