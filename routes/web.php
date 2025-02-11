@@ -41,19 +41,22 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-
-    $transactions_for_calc = Transaction::where('status', 'done')->get();
+    $transactions_for_calc = Transaction::with(['sales', 'otherIncomes', 'expenses', 'productions'])
+        ->where('status', 'done')
+        ->get();
 
     $total_pemasukan = 0;
 
     $total_pengeluaran = 0;
 
     foreach($transactions_for_calc as $transaction){
-        $total_pemasukan += $transaction->sales_total;
-        $total_pemasukan += $transaction->other_incomes_total;
+        $salesTotal = $transaction->sales->sum('amount');
+        $otherIncomesTotal = $transaction->otherIncomes->sum('amount');
+        $expensesTotal = $transaction->expenses->sum('amount');
+        $productionsTotal = $transaction->productions->sum('amount');
 
-        $total_pengeluaran += $transaction->expenses_total;
-        $total_pengeluaran += $transaction->productions_total;
+        $total_pemasukan += $salesTotal + $otherIncomesTotal;
+        $total_pengeluaran += $expensesTotal + $productionsTotal;
     }
 
     $expenses_for_calc = Expense::where('transaction_id', '=', NULL)->sum('amount');
@@ -70,8 +73,8 @@ Route::get('/dashboard', function () {
     $sisasaldo = $saldomasuk - $saldokeluar;
 
     return Inertia::render('Dashboard', [
-        'transaksiPending'          => (int) Transaction::where('status', 'pending')->get()->count(),
-        'transaksiSelesai'          => (int) Transaction::where('status', 'done')->get()->count(),
+        'transaksiPending'          => Transaction::where('status', 'pending')->count(),
+        'transaksiSelesai'          => Transaction::where('status', 'done')->count(),
         'total_pemasukan'           => $total_pemasukan,
         'total_pengeluaran'         => $total_pengeluaran,
         'laba'                      => $laba,
